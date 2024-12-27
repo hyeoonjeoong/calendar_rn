@@ -3,14 +3,18 @@ import { useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParamList } from '../navigation/Navigator.tsx';
 
-export type StackParamList = {
-  // 이동할 화면의 이름을 선언: {화면에 넘길 변수의 타입 선언, 없다면 undefined}
-  DateDetail: { selectedDate: string };
-};
+// export type StackParamList = {
+//   // 이동할 화면의 이름을 선언: {화면에 넘길 변수의 타입 선언, 없다면 undefined}
+//   DateDetail: { selectedDate: string };
+// };
+
+type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
 const CalendarScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  // const navigation = useNavigation();
+  const navigation = useNavigation<CalendarScreenNavigationProp>();
 
   // 일요일 0, 월요일 1, 화요일 2, 수요일 3, 목요일 4, 금요일 5, 토요일 6
   const DayHeader = ['일', '월', '화', '수', '목', '금', '토'];

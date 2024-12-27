@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
+import { StackParamList } from '../navigation/Navigator.tsx';
 
-const DateDetailScreen = ({ route }: { route: any }) => {
+type DateDetailScreenRouteProp = RouteProp<StackParamList, 'DateDetail'>;
+
+const DateDetailScreen = ({ route }: { route: DateDetailScreenRouteProp }) => {
   const { selectedDate } = route.params;
   console.log(route.params);
 

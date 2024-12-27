@@ -8,7 +8,13 @@ import { StyleSheet } from 'react-native';
 import BasicScreen from '../screens/BasicScreen.tsx';
 import DateDetailScreen from '../screens/DateDetailScreen.tsx';
 
-const Stack = createNativeStackNavigator();
+export type StackParamList = {
+  // 이동할 화면의 이름을 선언: {화면에 넘길 변수의 타입 선언, 없다면 undefined}
+  CalendarMain: undefined;
+  DateDetail: { selectedDate: string };
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator();
 
 const CalendarStack = () => {
