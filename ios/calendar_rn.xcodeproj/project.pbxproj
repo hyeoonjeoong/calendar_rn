@@ -16,6 +16,15 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		DADE352BA2DB78C9A30E4B4A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		F99A7C062D1D54E200D0AD9B /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = F99A7C052D1D54E200D0AD9B /* fonts */; };
+		1A3CECFA3FB34BA5A49703B3 /* Pretendard-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5062F66013EA45638107FD13 /* Pretendard-Black.ttf */; };
+		C6E44E64BAB7488894F2F1DA /* Pretendard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1EF3F0962E5E464B92FFA0F1 /* Pretendard-Bold.ttf */; };
+		B9722E6AF0B94557B1D360F0 /* Pretendard-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FD132E6FB7DA4C85B088381F /* Pretendard-ExtraBold.ttf */; };
+		5F52FF820008496B9213E267 /* Pretendard-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C829170325D54F84B11AD570 /* Pretendard-ExtraLight.ttf */; };
+		6F29DAEC4BEB4D02BEF4139E /* Pretendard-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F1046F2397C4E92BC7E110F /* Pretendard-Light.ttf */; };
+		CF0404BBC22D4530ABCC4454 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6B51141430E74D5E9CFFEF44 /* Pretendard-Medium.ttf */; };
+		D5C0F0A6B07145BEBFCB3E9B /* Pretendard-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F27DE6438D864B0BAE413092 /* Pretendard-Regular.ttf */; };
+		530D51E4920B40C0A3743130 /* Pretendard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF57D9F8C427493AA6A5CF10 /* Pretendard-SemiBold.ttf */; };
+		CB118096C99F442C86095BD4 /* Pretendard-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9F5D706F243C44E88853F1E0 /* Pretendard-Thin.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +57,15 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-calendar_rn-calendar_rnTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-calendar_rn-calendar_rnTests.release.xcconfig"; path = "Target Support Files/Pods-calendar_rn-calendar_rnTests/Pods-calendar_rn-calendar_rnTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F99A7C052D1D54E200D0AD9B /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
+		5062F66013EA45638107FD13 /* Pretendard-Black.ttf */ = {isa = PBXFileReference; name = "Pretendard-Black.ttf"; path = "../src/assets/font/Pretendard-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1EF3F0962E5E464B92FFA0F1 /* Pretendard-Bold.ttf */ = {isa = PBXFileReference; name = "Pretendard-Bold.ttf"; path = "../src/assets/font/Pretendard-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FD132E6FB7DA4C85B088381F /* Pretendard-ExtraBold.ttf */ = {isa = PBXFileReference; name = "Pretendard-ExtraBold.ttf"; path = "../src/assets/font/Pretendard-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C829170325D54F84B11AD570 /* Pretendard-ExtraLight.ttf */ = {isa = PBXFileReference; name = "Pretendard-ExtraLight.ttf"; path = "../src/assets/font/Pretendard-ExtraLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2F1046F2397C4E92BC7E110F /* Pretendard-Light.ttf */ = {isa = PBXFileReference; name = "Pretendard-Light.ttf"; path = "../src/assets/font/Pretendard-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6B51141430E74D5E9CFFEF44 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; name = "Pretendard-Medium.ttf"; path = "../src/assets/font/Pretendard-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F27DE6438D864B0BAE413092 /* Pretendard-Regular.ttf */ = {isa = PBXFileReference; name = "Pretendard-Regular.ttf"; path = "../src/assets/font/Pretendard-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DF57D9F8C427493AA6A5CF10 /* Pretendard-SemiBold.ttf */ = {isa = PBXFileReference; name = "Pretendard-SemiBold.ttf"; path = "../src/assets/font/Pretendard-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9F5D706F243C44E88853F1E0 /* Pretendard-Thin.ttf */ = {isa = PBXFileReference; name = "Pretendard-Thin.ttf"; path = "../src/assets/font/Pretendard-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +146,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				EEA75D1E59A449CB98ED67F5 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -153,6 +172,23 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		EEA75D1E59A449CB98ED67F5 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				5062F66013EA45638107FD13 /* Pretendard-Black.ttf */,
+				1EF3F0962E5E464B92FFA0F1 /* Pretendard-Bold.ttf */,
+				FD132E6FB7DA4C85B088381F /* Pretendard-ExtraBold.ttf */,
+				C829170325D54F84B11AD570 /* Pretendard-ExtraLight.ttf */,
+				2F1046F2397C4E92BC7E110F /* Pretendard-Light.ttf */,
+				6B51141430E74D5E9CFFEF44 /* Pretendard-Medium.ttf */,
+				F27DE6438D864B0BAE413092 /* Pretendard-Regular.ttf */,
+				DF57D9F8C427493AA6A5CF10 /* Pretendard-SemiBold.ttf */,
+				9F5D706F243C44E88853F1E0 /* Pretendard-Thin.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -251,6 +287,15 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				DADE352BA2DB78C9A30E4B4A /* PrivacyInfo.xcprivacy in Resources */,
 				F99A7C062D1D54E200D0AD9B /* fonts in Resources */,
+				1A3CECFA3FB34BA5A49703B3 /* Pretendard-Black.ttf in Resources */,
+				C6E44E64BAB7488894F2F1DA /* Pretendard-Bold.ttf in Resources */,
+				B9722E6AF0B94557B1D360F0 /* Pretendard-ExtraBold.ttf in Resources */,
+				5F52FF820008496B9213E267 /* Pretendard-ExtraLight.ttf in Resources */,
+				6F29DAEC4BEB4D02BEF4139E /* Pretendard-Light.ttf in Resources */,
+				CF0404BBC22D4530ABCC4454 /* Pretendard-Medium.ttf in Resources */,
+				D5C0F0A6B07145BEBFCB3E9B /* Pretendard-Regular.ttf in Resources */,
+				530D51E4920B40C0A3743130 /* Pretendard-SemiBold.ttf in Resources */,
+				CB118096C99F442C86095BD4 /* Pretendard-Thin.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +635,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -659,7 +707,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
