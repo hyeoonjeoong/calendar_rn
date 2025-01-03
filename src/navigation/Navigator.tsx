@@ -6,7 +6,7 @@ import MemoScreen from '../screens/MemoScreen.tsx';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet } from 'react-native';
 import BasicScreen from '../screens/BasicScreen.tsx';
-import DateDetailScreen from '../screens/DateDetailScreen.tsx';
+import ScheduleModal from '../components/ScheduleModal.tsx';
 import Icon from 'react-native-vector-icons/Ionicons';
 import theme from '../styles/theme.ts';
 import ScheduleEnrollScreen from '../screens/ScheduleEnrollScreen.tsx';
@@ -30,21 +30,21 @@ const CalendarStack = () => {
                 component={CalendarScreen}
                 options={{ headerShown: false }}
             />
-            <Stack.Screen
-                name="DateDetail"
-                component={DateDetailScreen}
-                options={{
-                    headerTitle: '',
-                    headerLeft: () => (
-                        <Icon
-                            name="chevron-back"
-                            size={24}
-                            color={theme.color.main}
-                            onPress={() => navigation.goBack()}
-                        />
-                    ),
-                }}
-            />
+            {/*<Stack.Screen*/}
+            {/*    name="DateDetail"*/}
+            {/*    component={ScheduleModal}*/}
+            {/*    options={{*/}
+            {/*        headerTitle: '',*/}
+            {/*        headerLeft: () => (*/}
+            {/*            <Icon*/}
+            {/*                name="chevron-back"*/}
+            {/*                size={24}*/}
+            {/*                color={theme.color.main}*/}
+            {/*                onPress={() => navigation.goBack()}*/}
+            {/*            />*/}
+            {/*        ),*/}
+            {/*    }}*/}
+            {/*/>*/}
             <Stack.Screen
                 name="ScheduleEnroll"
                 component={ScheduleEnrollScreen}
@@ -52,7 +52,7 @@ const CalendarStack = () => {
                     headerTitle: 'ScheduleEnroll',
                     headerLeft: () => (
                         <Icon
-                            name="chevron-down"
+                            name="chevron-back"
                             size={24}
                             color={theme.color.main}
                             onPress={() => navigation.goBack()}

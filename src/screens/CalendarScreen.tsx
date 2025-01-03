@@ -1,9 +1,6 @@
 import {
-  Modal,
-  Pressable,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,8 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
 import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { screenHeight } from '../libs/fun.ts';
+import ScheduleModal from "../components/ScheduleModal.tsx";
 
 type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
@@ -68,46 +64,7 @@ const CalendarScreen = () => {
 
   return (
       <SafeAreaView style={styles.container}>
-        <Modal
-            style={{ height: 10 }}
-            animationType="slide"
-            transparent={true}
-            visible={isViewModalOpen}
-            onRequestClose={() => setIsViewModalOpen(false)}
-        >
-          <Pressable
-              style={{ flex: 1, backgroundColor: 'transparent' }}
-              onPress={() => setIsViewModalOpen(false)}
-          />
-          <View style={styles.modalContainer}>
-            <View style={styles.dateContainer}>
-              <MyAppText size="large" space="-1">
-                {selectDate}
-              </MyAppText>
-            </View>
-            {/* 일정 없을 경우 */}
-            <View style={styles.noScheduleContainer}>
-              <Icon name="calendar-outline" size={26} color={theme.color.main} />
-              <MyAppText marginTop={2}>등록된 일정이 없어요</MyAppText>
-              <TouchableOpacity
-                  style={[styles.button, { marginTop: 5 }]}
-                  onPress={() => navigation.navigate('ScheduleEnroll')}
-              >
-                <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>
-              </TouchableOpacity>
-            </View>
-            {/* ----------- */}
-            <View style={styles.listContainer}>
-              <View style={styles.listItem}>
-                <View>
-                  <MyAppText>2025-05-05</MyAppText>
-                  <MyAppText>종일</MyAppText>
-                </View>
-                <MyAppText>누워있기</MyAppText>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        <ScheduleModal isViewModalOpen={isViewModalOpen} onClose={()=>setIsViewModalOpen(false)} selectDate={selectDate}/>
         <PanGestureHandler onGestureEvent={panGesture}>
           <View>
             <View style={styles.headerContainer}>
@@ -146,19 +103,13 @@ const CalendarScreen = () => {
                       currentDate.getFullYear() === new Date().getFullYear() &&
                       currentDate.getMonth() === new Date().getMonth() &&
                       currentDate.getDate() === day.day;
-                  // console.log(index);
                   return (
                       <TouchableOpacity
                           key={index}
                           onPress={() => {
-                            const date = `${year} ${String(month + 1).padStart(2, '0')} ${String(
-                                day.day,
-                            ).padStart(2, '0')}`;
+                            // const date = `${year} ${String(month + 1).padStart(2, '0')} ${String(day.day,).padStart(2, '0')}`;
+                            const date = `${String(month + 1).padStart(2, '0')}월 ${String(day.day,).padStart(2, '0')}일`;
                             setSelectDate(date);
-                            const selectedDate = `${year} ${String(month + 1).padStart(2, '0')} ${String(
-                                day.day,
-                            ).padStart(2, '0')}`;
-                            // navigation.navigate('DateDetail', { selectedDate });
                             setIsViewModalOpen(true);
                           }}
                           style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
@@ -244,55 +195,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     height: 21,
-  },
-  modalContainer: {
-    height: 240,
-    alignItems: 'center',
-    backgroundColor: theme.color.white,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    borderTopColor: theme.color.main,
-    borderRadius: 20,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    borderColor: theme.color.main,
-    padding: 10,
-    borderTopRightRadius: 20,
-    borderStyle: 'solid',
-  },
-  noScheduleContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 50,
-    width: '100%',
-  },
-  dateContainer: {
-    padding: 10,
-    display: 'flex',
-    alignItems: 'flex-start',
-    textAlign: 'left',
-    width: '100%',
-  },
-  button: {
-    backgroundColor: theme.color.main,
-    padding: 5,
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: theme.color.white,
-  },
-  listContainer: {
-    marginTop: 20,
-    width: '80%',
-  },
-  listItem: {
-    backgroundColor: theme.color.sub,
-    marginTop: 20,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
 });
 
