@@ -20,8 +20,7 @@ const ScheduleModal:React.FC<CalendarModalProps> = ({isViewModalOpen, onClose, s
 
   return (
       <Modal
-          style={{ height: 10 }}
-          animationType="slide"
+          animationType='fade'
           transparent={true}
           visible={isViewModalOpen}
           onRequestClose={onClose}
