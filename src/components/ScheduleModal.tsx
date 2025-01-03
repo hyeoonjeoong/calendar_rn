@@ -32,11 +32,11 @@ const ScheduleModal:React.FC<CalendarModalProps> = ({isViewModalOpen, onClose, s
         />
         <View style={styles.modalContainer}>
           <View style={styles.dateContainer}>
-            <MyAppText size="large" space="-1">
+            <MyAppText size="medium" space="-1">
               {selectDate}
             </MyAppText>
           </View>
-          {/* 일정 없을 경우 */}
+          {/* ----- 일정 없을 경우 ----- */}
           <View style={styles.noScheduleContainer}>
             <Icon name="calendar-outline" size={26} color={theme.color.main} />
             <MyAppText marginTop={2}>등록된 일정이 없어요</MyAppText>
@@ -50,7 +50,7 @@ const ScheduleModal:React.FC<CalendarModalProps> = ({isViewModalOpen, onClose, s
               <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>
             </TouchableOpacity>
           </View>
-          {/* ----------- */}
+          {/* ---------------------- */}
           <View style={styles.listContainer}>
             <View style={styles.listItem}>
               <View>

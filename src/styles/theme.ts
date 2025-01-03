@@ -11,8 +11,11 @@ export default {
     soft02: '#A5BFCC',
   },
   fonts: {
+    small: '12px',
     normal: '14px',
+    medium: '18px',
     large: '22px',
+    extraLarge: '30px',
     bold: '700',
     regular: '400',
   },
