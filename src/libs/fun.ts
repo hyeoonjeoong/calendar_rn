@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 디바이스 화면의 크기
 export const screenWidth = Dimensions.get('screen').width;
@@ -7,3 +8,20 @@ export const screenHeight = Dimensions.get('screen').height;
 // 현재 앱의 창에서 보여지는 부분의 크기
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
+
+export const setItem = async (key: string, value: string) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const getItem = async (key: string) => {
+  try {
+    const res = await AsyncStorage.getItem(key);
+    return JSON.parse(res as string);
+  } catch (e) {
+    console.log(e);
+  }
+};

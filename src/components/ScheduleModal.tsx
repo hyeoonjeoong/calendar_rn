@@ -1,10 +1,11 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, Pressable, Modal} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Pressable, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackParamList } from '../navigation/Navigator.tsx';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'ScheduleEnroll'>;
@@ -15,52 +16,72 @@ type CalendarModalProps = {
   selectDate: string | undefined;
 };
 
-const ScheduleModal:React.FC<CalendarModalProps> = ({isViewModalOpen, onClose, selectDate}) => {
+const ScheduleModal: React.FC<CalendarModalProps> = ({ isViewModalOpen, onClose, selectDate }) => {
   const navigation = useNavigation<CalendarScreenNavigationProp>();
 
   return (
-      <Modal
-          animationType='fade'
-          transparent={true}
-          visible={isViewModalOpen}
-          onRequestClose={onClose}
-      >
-        <Pressable
-            style={{ flex: 1, backgroundColor: 'transparent' }}
-            onPress={onClose}
-        />
-        <View style={styles.modalContainer}>
-          <View style={styles.dateContainer}>
-            <MyAppText size="large" space="-1">
-              {selectDate}
-            </MyAppText>
-          </View>
-          {/* ----- 일정 없을 경우 ----- */}
-          <View style={styles.noScheduleContainer}>
-            <Icon name="calendar-outline" size={26} color={theme.color.main} />
-            <MyAppText marginTop={2}>등록된 일정이 없어요</MyAppText>
-            <TouchableOpacity
-                style={[styles.button, { marginTop: 5 }]}
-                onPress={() => {
-                  onClose()
-                  navigation.navigate('ScheduleEnroll', {selectedDate: selectDate as string});
-                }}
-            >
-              <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>
-            </TouchableOpacity>
-          </View>
-          {/* ---------------------- */}
-          <View style={styles.listContainer}>
-            <View style={styles.listItem}>
-              <View>
-                <MyAppText>2025-05-05</MyAppText>
-                <MyAppText>종일</MyAppText>
-              </View>
-              <MyAppText>누워있기</MyAppText>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={isViewModalOpen}
+      onRequestClose={onClose}
+    >
+      <Pressable style={{ flex: 1, backgroundColor: 'transparent' }} onPress={onClose} />
+      <View style={styles.modalContainer}>
+        <View style={styles.dateContainer}>
+          <MyAppText size="large" space="-1">
+            {selectDate}
+          </MyAppText>
+
+          <TouchableOpacity
+            onPress={() => {
+              onClose();
+              navigation.navigate('ScheduleEnroll', { selectedDate: selectDate as string });
+            }}
+          >
+            <Icon name="add-circle-outline" size={24} color={theme.color.main} />
+          </TouchableOpacity>
+        </View>
+        {/* ----- 일정 없을 경우 ----- */}
+        {/*<View style={styles.noScheduleContainer}>*/}
+        {/*  <Icon name="calendar-outline" size={26} color={theme.color.main} />*/}
+        {/*  <MyAppText marginTop={2}>등록된 일정이 없어요</MyAppText>*/}
+        {/*  <TouchableOpacity*/}
+        {/*    style={[styles.button, { marginTop: 5 }]}*/}
+        {/*    onPress={() => {*/}
+        {/*      onClose();*/}
+        {/*      navigation.navigate('ScheduleEnroll', { selectedDate: selectDate as string });*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
+        {/* ---------------------- */}
+        <View style={styles.listContainer}>
+          <View style={styles.listItem}>
+            <View>
+              <MyAppText size="medium">2025-05-05</MyAppText>
+              <MyAppText color={theme.color.main}>종일</MyAppText>
             </View>
+            <MyAppText>누워있기</MyAppText>
+          </View>
+          <View style={styles.listItem}>
+            <View>
+              <MyAppText size="medium">2025-05-07</MyAppText>
+              <MyAppText color={theme.color.main}>17:00 - 18:00</MyAppText>
+            </View>
+            <MyAppText>누워있기 딩굴딩굴딩굴</MyAppText>
+          </View>
+          <View style={styles.listItem}>
+            <View>
+              <MyAppText size="medium">2025-05-07</MyAppText>
+              <MyAppText color={theme.color.main}>17:00 - 18:00</MyAppText>
+            </View>
+            <MyAppText>test data</MyAppText>
           </View>
         </View>
-      </Modal>
+      </View>
+    </Modal>
   );
 };
 
@@ -85,34 +106,39 @@ const styles = StyleSheet.create({
   noScheduleContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 50,
+    padding: 30,
     width: '100%',
   },
   dateContainer: {
     padding: 10,
+    paddingBottom: 4,
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     textAlign: 'left',
     width: '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   button: {
     backgroundColor: theme.color.main,
-    padding: 5,
+    padding: 6,
     borderRadius: 6,
   },
   buttonText: {
     color: theme.color.white,
   },
   listContainer: {
-    marginTop: 20,
-    width: '80%',
+    width: '96%',
   },
   listItem: {
-    backgroundColor: theme.color.sub,
     marginTop: 20,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    borderLeftWidth: 4,
+    borderLeftColor: theme.color.sub,
+    paddingLeft: 8,
   },
 });
 

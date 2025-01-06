@@ -9,6 +9,8 @@ import { format, formatDate } from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
+import { ko } from 'date-fns/locale';
+import { getItem, setItem } from '../libs/fun.ts';
 
 type ScheduleEnrollScreenNavigationProps = RouteProp<StackParamList, 'ScheduleEnroll'>;
 
@@ -46,7 +48,11 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
       endTime: isAllDay ? undefined : format(endTime, 'HH:mm'),
     };
     console.log(data, 'submitData');
+    console.log(JSON.stringify(data), 'gg');
+    setItem('schedule', JSON.stringify(data));
   };
+
+  console.log(getItem('schedule'), 'schedule data');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -84,7 +90,7 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
           <View style={styles.flexRow}>
             <TouchableOpacity onPress={() => setIsOpenStartModal(true)}>
               <View style={styles.dateItemBox}>
-                <MyAppText>{format(startDate, 'yyyy-MM-dd EEEE')}</MyAppText>
+                <MyAppText>{format(startDate, 'yyyy-MM-dd EEEE', { locale: ko })}</MyAppText>
               </View>
             </TouchableOpacity>
             {!isAllDay && (
@@ -111,7 +117,7 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
           <View style={styles.flexRow}>
             <TouchableOpacity onPress={() => setIsOpenEndModal(true)}>
               <View style={styles.dateItemBox}>
-                <MyAppText>{format(endDate, 'yyyy-MM-dd EEEE')}</MyAppText>
+                <MyAppText>{format(endDate, 'yyyy-MM-dd EEEE', { locale: ko })}</MyAppText>
               </View>
             </TouchableOpacity>
             {!isAllDay && (
@@ -225,7 +231,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   sectionContainer: {
-    marginTop: 20,
+    marginTop: 36,
     paddingHorizontal: 20,
     display: 'flex',
     gap: 6,
