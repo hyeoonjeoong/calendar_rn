@@ -9,9 +9,10 @@ export const screenHeight = Dimensions.get('screen').height;
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
 
-export const setItem = async (key: string, value: string) => {
+export const setItem = async (key: string, value: any) => {
   try {
-    await AsyncStorage.setItem(key, value);
+    console.log(JSON.stringify(value), 'setitem vale');
+    await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
     console.error(e);
   }
@@ -20,7 +21,7 @@ export const setItem = async (key: string, value: string) => {
 export const getItem = async (key: string) => {
   try {
     const res = await AsyncStorage.getItem(key);
-    return JSON.parse(res as string);
+    return res ? JSON.parse(res) : null;
   } catch (e) {
     console.log(e);
   }

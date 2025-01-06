@@ -3,9 +3,9 @@ import { MyAppText } from '../styles/typography.ts';
 import { RouteProp } from '@react-navigation/native';
 import { StackParamList } from '../navigation/Navigator.tsx';
 import theme from '../styles/theme.ts';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import { format, formatDate } from 'date-fns';
+import { format } from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
@@ -40,6 +40,7 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
       return;
     }
     const data = {
+      id: `${Date.now()}`,
       title,
       content,
       startDate: format(startDate, 'yyyy-MM-dd'),
@@ -47,12 +48,30 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
       endDate: format(endDate, 'yyyy-MM-dd'),
       endTime: isAllDay ? undefined : format(endTime, 'HH:mm'),
     };
-    console.log(data, 'submitData');
-    console.log(JSON.stringify(data), 'gg');
-    setItem('schedule', JSON.stringify(data));
+
+    saveSchedule(data);
   };
 
-  console.log(getItem('schedule'), 'schedule data');
+  const saveSchedule = async (schedule: {}) => {
+    try {
+      const originData = (await getItem('schedule')) ?? [];
+      const updatedData = [...originData, schedule];
+
+      await setItem('schedule', updatedData);
+      console.log(updatedData, '저장');
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getItem('schedule');
+      console.log(data, 'getItem schedule data');
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
