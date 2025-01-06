@@ -31,7 +31,7 @@ const ScheduleModal:React.FC<CalendarModalProps> = ({isViewModalOpen, onClose, s
         />
         <View style={styles.modalContainer}>
           <View style={styles.dateContainer}>
-            <MyAppText size="medium" space="-1">
+            <MyAppText size="large" space="-1">
               {selectDate}
             </MyAppText>
           </View>
@@ -43,7 +43,7 @@ const ScheduleModal:React.FC<CalendarModalProps> = ({isViewModalOpen, onClose, s
                 style={[styles.button, { marginTop: 5 }]}
                 onPress={() => {
                   onClose()
-                  navigation.navigate('ScheduleEnroll')
+                  navigation.navigate('ScheduleEnroll', {selectedDate: selectDate as string});
                 }}
             >
               <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>

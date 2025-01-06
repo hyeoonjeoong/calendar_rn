@@ -1,9 +1,4 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,7 +9,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
 import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
-import ScheduleModal from "../components/ScheduleModal.tsx";
+import ScheduleModal from '../components/ScheduleModal.tsx';
+import { format } from 'date-fns';
 
 type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
@@ -45,100 +41,103 @@ const CalendarScreen = () => {
     }
   };
   const panGesture = (e: GestureEvent) => {
-    // console.log(e);
     // console.log(e.nativeEvent);
     const { translationX } = e.nativeEvent;
     console.log(typeof translationX);
 
     if ((translationX as number) > 50) {
-      // console.log('이전달');
       handleMonth('prev');
     } else if ((translationX as number) > -50) {
-      // console.log('다음달');
       handleMonth('next');
     }
   };
 
   const createCalendar = getCalendarDays(year, month);
-  // const myIcon2 = <Icon name="comments" size={30} color="#900" iconStyle="solid" />;
 
   return (
-      <SafeAreaView style={styles.container}>
-        <ScheduleModal isViewModalOpen={isViewModalOpen} onClose={()=>setIsViewModalOpen(false)} selectDate={selectDate}/>
-        <PanGestureHandler onGestureEvent={panGesture}>
-          <View>
-            <View style={styles.headerContainer}>
-              <View style={styles.header}>
-                {/*<TouchableOpacity onPress={() => handleMonth('prev')}>*/}
-                {/*  <Icon name="chevron-back-sharp" size={16} color="#4C585B" />*/}
-                {/*</TouchableOpacity>*/}
-                <MyAppText size="large" bold space="-1px">
-                  {year} {String(month + 1).padStart(2, '0')}
-                </MyAppText>
-                {/*<TouchableOpacity onPress={() => handleMonth('next')}>*/}
-                {/*  <Icon name="chevron-forward-sharp" size={16} color="#4C585B" />*/}
-                {/*</TouchableOpacity>*/}
-              </View>
-              <View>
-                <TouchableOpacity onPress={() => handleMonth('now')}>
-                  <Icon name="today" size={25} color={theme.color.main} />
-                </TouchableOpacity>
-              </View>
+    <SafeAreaView style={styles.container}>
+      <ScheduleModal
+        isViewModalOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
+        selectDate={selectDate}
+      />
+      <PanGestureHandler onGestureEvent={panGesture}>
+        <View>
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              {/*<TouchableOpacity onPress={() => handleMonth('prev')}>*/}
+              {/*  <Icon name="chevron-back-sharp" size={16} color="#4C585B" />*/}
+              {/*</TouchableOpacity>*/}
+              <MyAppText size="extraLarge" bold space="-1px">
+                {year} {String(month + 1).padStart(2, '0')}
+              </MyAppText>
+              {/*<TouchableOpacity onPress={() => handleMonth('next')}>*/}
+              {/*  <Icon name="chevron-forward-sharp" size={16} color="#4C585B" />*/}
+              {/*</TouchableOpacity>*/}
             </View>
-
-            <View style={styles.table}>
-              <View style={styles.row}>
-                {DayHeader.map((day, index) => (
-                    <View style={styles.headerCell} key={index}>
-                      <MyAppText bold color={theme.color.main}>
-                        {day}
-                      </MyAppText>
-                    </View>
-                ))}
-              </View>
-
-              <View style={styles.row}>
-                {createCalendar?.map((day, index) => {
-                  const isToday =
-                      currentDate.getFullYear() === new Date().getFullYear() &&
-                      currentDate.getMonth() === new Date().getMonth() &&
-                      currentDate.getDate() === day.day;
-                  return (
-                      <TouchableOpacity
-                          key={index}
-                          onPress={() => {
-                            // const date = `${year} ${String(month + 1).padStart(2, '0')} ${String(day.day,).padStart(2, '0')}`;
-                            const date = `${String(month + 1).padStart(2, '0')}월 ${String(day.day,).padStart(2, '0')}일`;
-                            setSelectDate(date);
-                            setIsViewModalOpen(true);
-                          }}
-                          style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
-                      >
-                        <View>
-                          <MyAppText
-                              style={[
-                                {
-                                  color: day.isCurrentMonth
-                                      ? isToday
-                                          ? 'white'
-                                          : 'black'
-                                      : day.isPrevMonth || day.isNextMonth
-                                          ? 'darkgray'
-                                          : 'black',
-                                },
-                              ]}
-                          >
-                            {day.day}
-                          </MyAppText>
-                        </View>
-                      </TouchableOpacity>
-                  );
-                })}
-              </View>
+            <View>
+              <TouchableOpacity onPress={() => handleMonth('now')}>
+                <Icon name="today" size={25} color={theme.color.main} />
+              </TouchableOpacity>
             </View>
           </View>
-        </PanGestureHandler>
-      </SafeAreaView>
+
+          <View style={styles.table}>
+            <View style={styles.row}>
+              {DayHeader.map((day, index) => (
+                <View style={styles.headerCell} key={index}>
+                  <MyAppText bold color={theme.color.main}>
+                    {day}
+                  </MyAppText>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.row}>
+              {createCalendar?.map((day, index) => {
+                const isToday =
+                  currentDate.getFullYear() === new Date().getFullYear() &&
+                  currentDate.getMonth() === new Date().getMonth() &&
+                  currentDate.getDate() === day.day;
+
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      const date = `${String(month + 1).padStart(2, '0')}월 ${String(
+                        day.day,
+                      ).padStart(2, '0')}일`;
+                      const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
+                      setSelectDate(formattedDate);
+                      setIsViewModalOpen(true);
+                    }}
+                    style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
+                  >
+                    <View>
+                      <MyAppText
+                        style={[
+                          {
+                            color: day.isCurrentMonth
+                              ? isToday
+                                ? 'white'
+                                : 'black'
+                              : day.isPrevMonth || day.isNextMonth
+                              ? 'darkgray'
+                              : 'black',
+                          },
+                        ]}
+                      >
+                        {day.day}
+                      </MyAppText>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        </View>
+      </PanGestureHandler>
+    </SafeAreaView>
   );
 };
 
