@@ -57,7 +57,7 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
   };
 
   const saveSchedule = async (schedule: TSchedule) => {
-    console.log(schedule, 'schedule');
+    // console.log(schedule, 'schedule');
     const { startDate } = schedule;
     try {
       const originData = (await getItem('schedule')) ?? [];

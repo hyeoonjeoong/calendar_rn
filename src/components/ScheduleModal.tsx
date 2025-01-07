@@ -8,14 +8,18 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { TSchedule } from '../type/schedule.ts';
 import { screenWidth } from '../libs/fun.ts';
+// import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'ScheduleEnroll'>;
-
 type CalendarModalProps = {
   isViewModalOpen: boolean;
   onClose: () => void;
   selectDate: string | undefined;
   scheduleData: TSchedule[];
+  deleteAction: (date: string, id: string) => void;
 };
 
 const ScheduleModal: React.FC<CalendarModalProps> = ({
@@ -23,9 +27,11 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
   onClose,
   selectDate,
   scheduleData,
+  deleteAction,
 }) => {
   const navigation = useNavigation<CalendarScreenNavigationProp>();
   const [scheduleList, setScheduleList] = useState<TSchedule[]>();
+  const [selectedItem, setSelectedItem] = useState<TSchedule>();
 
   useEffect(() => {
     if (!selectDate || !scheduleData) {
@@ -44,6 +50,27 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
 
     // fetchData();
   }, [selectDate, scheduleData]);
+
+  function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+    const styleAnimation = useAnimatedStyle(() => {
+      // console.log('showRightProgress:', prog.value);
+      // console.log('appliedTranslation:', drag.value);
+      return {
+        transform: [{ translateX: drag.value + 40 }],
+      };
+    });
+
+    return (
+      <Reanimated.View style={styleAnimation}>
+        <TouchableOpacity
+          style={styles.rightAction}
+          onPress={() => deleteAction(String(selectedItem?.startDate), String(selectedItem?.id))}
+        >
+          <Icon name="trash-outline" size={24} color={theme.color.white} />
+        </TouchableOpacity>
+      </Reanimated.View>
+    );
+  }
 
   return (
     <Modal
@@ -93,15 +120,23 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
             <View style={styles.listContainer}>
               {scheduleData &&
                 scheduleList?.map((item, index) => (
-                  <View key={index} style={styles.listItem}>
-                    <View>
-                      <MyAppText size="medium">{item.title || '날짜 없음'}</MyAppText>
-                      <MyAppText color={theme.color.main}>
-                        {`${item.startTime} ~ ${item.endTime}` || '종일'}
-                      </MyAppText>
+                  <ReanimatedSwipeable
+                    friction={2}
+                    enableTrackpadTwoFingerGesture
+                    rightThreshold={40}
+                    renderRightActions={RightAction}
+                    onSwipeableWillOpen={() => setSelectedItem(item)}
+                  >
+                    <View key={index} style={styles.listItem}>
+                      <View>
+                        <MyAppText size="medium">{item.title || '날짜 없음'}</MyAppText>
+                        <MyAppText color={theme.color.main}>
+                          {`${item.startTime} ~ ${item.endTime}` || '종일'}
+                        </MyAppText>
+                      </View>
+                      <MyAppText>{item.content || '내용이 없어요'}</MyAppText>
                     </View>
-                    <MyAppText>{item.content || '내용이 없어요'}</MyAppText>
-                  </View>
+                  </ReanimatedSwipeable>
                 ))}
             </View>
           </View>
@@ -131,7 +166,7 @@ const styles = StyleSheet.create({
   noScheduleContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 30,
+    padding: 50,
     width: '100%',
   },
   dateContainer: {
@@ -165,6 +200,16 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: theme.color.sub,
     paddingLeft: 8,
+    paddingRight: 8,
+  },
+  rightAction: {
+    width: 40,
+    height: 38,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    backgroundColor: theme.color.red,
   },
 });
 

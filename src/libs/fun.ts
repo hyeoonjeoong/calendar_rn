@@ -27,3 +27,11 @@ export const getItem = async (key: string) => {
     console.log(e);
   }
 };
+
+export const removeItem = async (key: string) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (e) {
+    console.log(e);
+  }
+};

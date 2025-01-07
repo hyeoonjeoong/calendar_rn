@@ -1,8 +1,5 @@
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParamList } from '../navigation/Navigator.tsx';
+import React, { useState } from 'react';
 import { getCalendarDays } from '../libs/date.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
@@ -11,7 +8,7 @@ import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
 import ScheduleModal from '../components/ScheduleModal.tsx';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getItem } from '../libs/fun.ts';
+import { getItem, setItem } from '../libs/fun.ts';
 import { TSchedule } from '../type/schedule.ts';
 
 // type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
@@ -59,6 +56,23 @@ const CalendarScreen = () => {
     setScheduleList(data);
   };
 
+  const deleteSchedule = async (startDate: string, scheduleId: string) => {
+    const data = await getItem('schedule');
+    const updatedSchedule = data[startDate].filter(el => el.id !== scheduleId);
+
+    try {
+      if (updatedSchedule.length === 0) {
+        delete data[startDate];
+      } else {
+        data[startDate] = updatedSchedule;
+      }
+      setItem('schedule', data);
+    } catch (e) {
+      console.log(e);
+    }
+    fetchData();
+  };
+
   const createCalendar = getCalendarDays(year, month);
   return (
     <SafeAreaView style={styles.container}>
@@ -69,6 +83,7 @@ const CalendarScreen = () => {
         }}
         selectDate={selectDate}
         scheduleData={scheduleList ?? []}
+        deleteAction={(date: string, id: string) => deleteSchedule(date, id)}
       />
       <PanGestureHandler onGestureEvent={panGesture}>
         <View>
