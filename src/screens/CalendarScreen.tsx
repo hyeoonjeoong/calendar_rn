@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { getCalendarDays } from '../libs/date.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
@@ -74,12 +74,29 @@ const CalendarScreen = () => {
   };
 
   const createCalendar = getCalendarDays(year, month);
+
+  useEffect(() => {
+    // 여기가 안되네. 바로바로 안불러와짐
+    console.log('main render');
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      scheduleList && Array.isArray(scheduleList['2025-01-07'])
+        ? scheduleList['2025-01-07'].map(el => el.content)
+        : 'no',
+      'scheduleList',
+    );
+  }, [scheduleList]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScheduleModal
         isViewModalOpen={isViewModalOpen}
         onClose={() => {
           setIsViewModalOpen(false);
+          fetchData();
         }}
         selectDate={selectDate}
         scheduleData={scheduleList ?? []}
@@ -127,6 +144,8 @@ const CalendarScreen = () => {
                   currentDate.getMonth() === new Date().getMonth() &&
                   currentDate.getDate() === day.day;
 
+                const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
+
                 return (
                   <TouchableOpacity
                     key={index}
@@ -134,7 +153,7 @@ const CalendarScreen = () => {
                       const date = `${String(month + 1).padStart(2, '0')}월 ${String(
                         day.day,
                       ).padStart(2, '0')}일`;
-                      const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
+                      // const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
                       setSelectDate(formattedDate);
                       setIsViewModalOpen(true);
                       fetchData();
@@ -145,6 +164,7 @@ const CalendarScreen = () => {
                       <MyAppText
                         style={[
                           {
+                            // marginTop: 4,
                             color: day.isCurrentMonth
                               ? isToday
                                 ? 'white'
@@ -157,6 +177,17 @@ const CalendarScreen = () => {
                       >
                         {day.day}
                       </MyAppText>
+                    </View>
+                    <View style={styles.scheduleItemContainer}>
+                      {scheduleList && Array.isArray(scheduleList[formattedDate])
+                        ? scheduleList[formattedDate]
+                            .slice(0, 2)
+                            .map((item: TSchedule, i: string) => (
+                              <View key={i} style={styles.scheduleItem}>
+                                <MyAppText>{item.title}</MyAppText>
+                              </View>
+                            ))
+                        : null}
                     </View>
                   </TouchableOpacity>
                 );
@@ -212,9 +243,27 @@ const styles = StyleSheet.create({
     width: '14%',
     textAlign: 'center',
     alignItems: 'center',
-    height: 70,
+    height: 80,
+
+    // padding: 2,
+    // borderWidth: 0.3,
+    // borderColor: `${theme.color.sub}40`,
   },
-  text: {},
+  scheduleItemContainer: {
+    marginTop: 8,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+  },
+  scheduleItem: {
+    // borderWidth: 1,
+    // borderColor: `${theme.color.sub}70`,
+    width: 46,
+    padding: 1,
+    borderRadius: 3,
+    alignItems: 'center',
+    backgroundColor: `${theme.color.sub}20`,
+  },
   today: {
     backgroundColor: theme.color.main,
     width: '14%',
