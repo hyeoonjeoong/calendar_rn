@@ -11,7 +11,8 @@ export const windowHeight = Dimensions.get('window').height;
 
 export const setItem = async (key: string, value: any) => {
   try {
-    console.log(JSON.stringify(value), 'setitem vale');
+    // console.log('gg');
+    // console.log(JSON.stringify(value), 'setitem vale');
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
     console.error(e);

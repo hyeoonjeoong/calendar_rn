@@ -89,21 +89,21 @@ const Navigator = () => {
             ),
           }}
         />
-        <Tab.Screen
-          name="App"
-          component={BasicScreen}
-          options={{
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <Icon
-                name={focused ? 'clipboard' : 'clipboard-outline'}
-                size={24}
-                color={focused ? theme.color.main : theme.color.sub}
-              />
-            ),
-          }}
-        />
+        {/*<Tab.Screen*/}
+        {/*  name="App"*/}
+        {/*  component={BasicScreen}*/}
+        {/*  options={{*/}
+        {/*    headerShown: false,*/}
+        {/*    tabBarShowLabel: false,*/}
+        {/*    tabBarIcon: ({ focused }) => (*/}
+        {/*      <Icon*/}
+        {/*        name={focused ? 'clipboard' : 'clipboard-outline'}*/}
+        {/*        size={24}*/}
+        {/*        color={focused ? theme.color.main : theme.color.sub}*/}
+        {/*      />*/}
+        {/*    ),*/}
+        {/*  }}*/}
+        {/*/>*/}
       </Tab.Navigator>
     </NavigationContainer>
   );

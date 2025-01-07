@@ -4,21 +4,23 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/Navigator.tsx';
 import { getCalendarDays } from '../libs/date.ts';
-// import Icon from 'react-native-vector-icons/AntDesign.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
-
 import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
 import ScheduleModal from '../components/ScheduleModal.tsx';
 import { format } from 'date-fns';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem } from '../libs/fun.ts';
+import { TSchedule } from '../type/schedule.ts';
 
-type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
+// type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
 const CalendarScreen = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectDate, setSelectDate] = useState<string>();
-  const navigation = useNavigation<CalendarScreenNavigationProp>();
+  // const navigation = useNavigation<CalendarScreenNavigationProp>();
+  const [scheduleList, setScheduleList] = useState<TSchedule[]>();
 
   // 일요일 0, 월요일 1, 화요일 2, 수요일 3, 목요일 4, 금요일 5, 토요일 6
   const DayHeader = ['일', '월', '화', '수', '목', '금', '토'];
@@ -26,8 +28,8 @@ const CalendarScreen = () => {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const date = currentDate.getDate();
-  const day = currentDate.getDay();
+  // const date = currentDate.getDate();
+  // const day = currentDate.getDay();
 
   const handleMonth = (type: 'prev' | 'next' | 'now') => {
     if (type === 'prev') {
@@ -41,11 +43,10 @@ const CalendarScreen = () => {
       setCurrentDate(nowMoth);
     }
   };
-  const panGesture = (e: GestureEvent) => {
-    // console.log(e.nativeEvent);
-    const { translationX } = e.nativeEvent;
-    console.log(typeof translationX);
 
+  const panGesture = (e: GestureEvent) => {
+    const { translationX } = e.nativeEvent;
+    // console.log(typeof translationX);
     if ((translationX as number) > 50) {
       handleMonth('prev');
     } else if ((translationX as number) > -50) {
@@ -53,14 +54,21 @@ const CalendarScreen = () => {
     }
   };
 
-  const createCalendar = getCalendarDays(year, month);
+  const fetchData = async () => {
+    const data = await getItem('schedule');
+    setScheduleList(data);
+  };
 
+  const createCalendar = getCalendarDays(year, month);
   return (
     <SafeAreaView style={styles.container}>
       <ScheduleModal
         isViewModalOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
+        onClose={() => {
+          setIsViewModalOpen(false);
+        }}
         selectDate={selectDate}
+        scheduleData={scheduleList ?? []}
       />
       <PanGestureHandler onGestureEvent={panGesture}>
         <View>
@@ -76,6 +84,9 @@ const CalendarScreen = () => {
               {/*  <Icon name="chevron-forward-sharp" size={16} color="#4C585B" />*/}
               {/*</TouchableOpacity>*/}
             </View>
+            <TouchableOpacity onPress={() => AsyncStorage.clear()}>
+              <MyAppText>AsyncStorage clean</MyAppText>
+            </TouchableOpacity>
             <View>
               <TouchableOpacity onPress={() => handleMonth('now')}>
                 <Icon name="today" size={25} color={theme.color.main} />
@@ -111,6 +122,7 @@ const CalendarScreen = () => {
                       const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
                       setSelectDate(formattedDate);
                       setIsViewModalOpen(true);
+                      fetchData();
                     }}
                     style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
                   >

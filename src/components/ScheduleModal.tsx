@@ -1,12 +1,13 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Pressable, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Pressable, Modal, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackParamList } from '../navigation/Navigator.tsx';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
-
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { TSchedule } from '../type/schedule.ts';
+import { screenWidth } from '../libs/fun.ts';
 
 type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'ScheduleEnroll'>;
 
@@ -14,10 +15,35 @@ type CalendarModalProps = {
   isViewModalOpen: boolean;
   onClose: () => void;
   selectDate: string | undefined;
+  scheduleData: TSchedule[];
 };
 
-const ScheduleModal: React.FC<CalendarModalProps> = ({ isViewModalOpen, onClose, selectDate }) => {
+const ScheduleModal: React.FC<CalendarModalProps> = ({
+  isViewModalOpen,
+  onClose,
+  selectDate,
+  scheduleData,
+}) => {
   const navigation = useNavigation<CalendarScreenNavigationProp>();
+  const [scheduleList, setScheduleList] = useState<TSchedule[]>();
+
+  useEffect(() => {
+    if (!selectDate || !scheduleData) {
+      return;
+    }
+    const list = scheduleData[selectDate] ? scheduleData[selectDate] : [];
+    setScheduleList(list);
+
+    // const fetchData = async () => {
+    //   const data = await getItem('schedule');
+    //
+    //   const list = (await data) && data[selectDate] ? data[selectDate] : [];
+    //   // console.log(scheduleList, 'get scheduleList', selectDate);
+    //   setScheduleList(list);
+    // };
+
+    // fetchData();
+  }, [selectDate, scheduleData]);
 
   return (
     <Modal
@@ -32,54 +58,54 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({ isViewModalOpen, onClose,
           <MyAppText size="large" space="-1">
             {selectDate}
           </MyAppText>
+          {scheduleList && scheduleList?.length > 0 && (
+            <TouchableOpacity
+              onPress={() => {
+                onClose();
+                navigation.navigate('ScheduleEnroll', { selectedDate: selectDate as string });
+              }}
+            >
+              <Icon name="add-circle-outline" size={24} color={theme.color.main} />
+            </TouchableOpacity>
+          )}
+        </View>
 
-          <TouchableOpacity
-            onPress={() => {
-              onClose();
-              navigation.navigate('ScheduleEnroll', { selectedDate: selectDate as string });
-            }}
-          >
-            <Icon name="add-circle-outline" size={24} color={theme.color.main} />
-          </TouchableOpacity>
-        </View>
-        {/* ----- 일정 없을 경우 ----- */}
-        {/*<View style={styles.noScheduleContainer}>*/}
-        {/*  <Icon name="calendar-outline" size={26} color={theme.color.main} />*/}
-        {/*  <MyAppText marginTop={2}>등록된 일정이 없어요</MyAppText>*/}
-        {/*  <TouchableOpacity*/}
-        {/*    style={[styles.button, { marginTop: 5 }]}*/}
-        {/*    onPress={() => {*/}
-        {/*      onClose();*/}
-        {/*      navigation.navigate('ScheduleEnroll', { selectedDate: selectDate as string });*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>*/}
-        {/*  </TouchableOpacity>*/}
-        {/*</View>*/}
-        {/* ---------------------- */}
-        <View style={styles.listContainer}>
-          <View style={styles.listItem}>
-            <View>
-              <MyAppText size="medium">2025-05-05</MyAppText>
-              <MyAppText color={theme.color.main}>종일</MyAppText>
-            </View>
-            <MyAppText>누워있기</MyAppText>
+        {scheduleList?.length === 0 && (
+          <View style={styles.noScheduleContainer}>
+            <Icon name="calendar-outline" size={26} color={theme.color.main} />
+            <MyAppText marginTop={2}>등록된 일정이 없어요</MyAppText>
+            <TouchableOpacity
+              style={[styles.button, { marginTop: 5 }]}
+              onPress={() => {
+                onClose();
+                navigation.navigate('ScheduleEnroll', { selectedDate: selectDate as string });
+              }}
+            >
+              <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>
+            </TouchableOpacity>
           </View>
-          <View style={styles.listItem}>
-            <View>
-              <MyAppText size="medium">2025-05-07</MyAppText>
-              <MyAppText color={theme.color.main}>17:00 - 18:00</MyAppText>
+        )}
+
+        <ScrollView
+          contentContainerStyle={{ width: screenWidth, display: 'flex', alignItems: 'center' }}
+        >
+          <View style={styles.listContainer}>
+            <View style={styles.listContainer}>
+              {scheduleData &&
+                scheduleList?.map((item, index) => (
+                  <View key={index} style={styles.listItem}>
+                    <View>
+                      <MyAppText size="medium">{item.title || '날짜 없음'}</MyAppText>
+                      <MyAppText color={theme.color.main}>
+                        {`${item.startTime} ~ ${item.endTime}` || '종일'}
+                      </MyAppText>
+                    </View>
+                    <MyAppText>{item.content || '내용이 없어요'}</MyAppText>
+                  </View>
+                ))}
             </View>
-            <MyAppText>누워있기 딩굴딩굴딩굴</MyAppText>
           </View>
-          <View style={styles.listItem}>
-            <View>
-              <MyAppText size="medium">2025-05-07</MyAppText>
-              <MyAppText color={theme.color.main}>17:00 - 18:00</MyAppText>
-            </View>
-            <MyAppText>test data</MyAppText>
-          </View>
-        </View>
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -99,7 +125,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     borderColor: theme.color.main,
-    padding: 10,
     borderTopRightRadius: 20,
     borderStyle: 'solid',
   },
@@ -129,6 +154,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: '96%',
+    padding: 8,
   },
   listItem: {
     marginTop: 20,

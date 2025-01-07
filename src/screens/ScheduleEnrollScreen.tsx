@@ -1,9 +1,9 @@
 import { SafeAreaView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { MyAppText } from '../styles/typography.ts';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackParamList } from '../navigation/Navigator.tsx';
 import theme from '../styles/theme.ts';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
 import { format } from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -11,11 +11,16 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
 import { ko } from 'date-fns/locale';
 import { getItem, setItem } from '../libs/fun.ts';
+import { TSchedule } from '../type/schedule.ts';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type ScheduleEnrollScreenNavigationProps = RouteProp<StackParamList, 'ScheduleEnroll'>;
+type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'CalendarMain'>;
 
 const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigationProps }) => {
   const { selectedDate } = route.params;
+  const navigation = useNavigation<CalendarScreenNavigationProp>();
+
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
 
@@ -44,34 +49,31 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
       title,
       content,
       startDate: format(startDate, 'yyyy-MM-dd'),
-      startTime: isAllDay ? undefined : format(startTime, 'HH:mm'),
+      startTime: isAllDay ? '' : format(startTime, 'HH:mm'),
       endDate: format(endDate, 'yyyy-MM-dd'),
-      endTime: isAllDay ? undefined : format(endTime, 'HH:mm'),
+      endTime: isAllDay ? '' : format(endTime, 'HH:mm'),
     };
-
     saveSchedule(data);
   };
 
-  const saveSchedule = async (schedule: {}) => {
+  const saveSchedule = async (schedule: TSchedule) => {
+    console.log(schedule, 'schedule');
+    const { startDate } = schedule;
     try {
       const originData = (await getItem('schedule')) ?? [];
-      const updatedData = [...originData, schedule];
+      const updatedData = {
+        ...originData,
+        [startDate]: Array.isArray(originData[startDate])
+          ? [{ ...schedule }, ...originData[startDate]]
+          : [{ ...schedule }],
+      };
 
       await setItem('schedule', updatedData);
-      console.log(updatedData, '저장');
+      navigation.navigate('CalendarMain');
     } catch (e) {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getItem('schedule');
-      console.log(data, 'getItem schedule data');
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
