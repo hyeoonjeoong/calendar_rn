@@ -92,6 +92,7 @@ const CalendarScreen = props => {
         isViewModalOpen={isViewModalOpen}
         onClose={() => {
           setIsViewModalOpen(false);
+          setSelectDate(undefined);
         }}
         selectDate={selectDate}
         scheduleData={scheduleList ?? []}
@@ -122,7 +123,7 @@ const CalendarScreen = props => {
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={() => AsyncStorage.clear()}>
-            <MyAppText>AsyncStorage clean</MyAppText>
+            <MyAppText>Storage Clean</MyAppText>
           </TouchableOpacity>
           <View>
             <TouchableOpacity onPress={() => handleMonth('now')}>
@@ -160,27 +161,22 @@ const CalendarScreen = props => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    const date = `${String(month + 1).padStart(2, '0')}월 ${String(
-                      day.day,
-                    ).padStart(2, '0')}일`;
-                    // const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
                     setSelectDate(formattedDate);
                     setIsViewModalOpen(true);
                   }}
-                  style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
+                  style={[
+                    styles.cell,
+                    isToday && day.isCurrentMonth && styles.today,
+                    // selectDate === formattedDate && day.isCurrentMonth && styles.selectDay,
+                    selectDate === formattedDate && styles.selectDay,
+                  ]}
                 >
                   <View>
                     <MyAppText
                       style={[
-                        {
-                          color: day.isCurrentMonth
-                            ? isToday
-                              ? 'white'
-                              : 'black'
-                            : day.isPrevMonth || day.isNextMonth
-                            ? 'darkgray'
-                            : 'black',
-                        },
+                        isToday && styles.todayText,
+                        (day.isPrevMonth || day.isNextMonth) && styles.disabledText,
+                        selectDate === formattedDate && styles.selectText,
                       ]}
                     >
                       {day.day}
@@ -262,7 +258,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     height: 80,
-
     // padding: 2,
     // borderWidth: 0.3,
     // borderColor: `${theme.color.sub}40`,
@@ -280,7 +275,7 @@ const styles = StyleSheet.create({
     padding: 1,
     borderRadius: 3,
     alignItems: 'center',
-    backgroundColor: `${theme.color.sub}20`,
+    backgroundColor: `${theme.color.sub}40`,
   },
   noItem: {
     width: 46,
@@ -300,6 +295,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     height: 21,
+  },
+  selectDay: {
+    backgroundColor: `${theme.color.main}25`,
+    // borderWidth: 1,
+    // borderColor: `${theme.color.main}50`,
+    width: '14%',
+    borderRadius: 3,
+    textAlign: 'center',
+    alignItems: 'center',
+    height: 72,
+  },
+  todayText: {
+    color: theme.color.white,
+  },
+  selectText: {
+    color: theme.color.main,
+  },
+  disabledText: {
+    color: 'darkgray',
   },
 });
 

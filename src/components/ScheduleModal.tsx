@@ -134,7 +134,7 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
                           {item.startTime ? `${item.startTime} ~ ${item.endTime}` : '종일'}
                         </MyAppText>
                       </View>
-                      <MyAppText>{item.content || '내용이 없어요'}</MyAppText>
+                      <MyAppText>{item.content || ''}</MyAppText>
                     </View>
                   </ReanimatedSwipeable>
                 ))}
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dateContainer: {
-    padding: 10,
+    padding: 20,
     paddingBottom: 4,
     display: 'flex',
     alignItems: 'center',
@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
   },
   rightAction: {
     width: 40,
+    // flex: 1,
     height: 38,
     marginTop: 20,
     alignItems: 'center',
