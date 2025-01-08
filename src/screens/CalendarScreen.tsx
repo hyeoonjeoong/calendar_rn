@@ -13,7 +13,7 @@ import { TSchedule } from '../type/schedule.ts';
 
 // type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
-const CalendarScreen = () => {
+const CalendarScreen = props => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectDate, setSelectDate] = useState<string>();
   // const navigation = useNavigation<CalendarScreenNavigationProp>();
@@ -22,6 +22,13 @@ const CalendarScreen = () => {
   // 일요일 0, 월요일 1, 화요일 2, 수요일 3, 목요일 4, 금요일 5, 토요일 6
   const DayHeader = ['일', '월', '화', '수', '목', '금', '토'];
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener('transitionEnd', e => {
+      fetchData();
+    });
+    return unsubscribe;
+  }, [props.navigation]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -76,19 +83,8 @@ const CalendarScreen = () => {
   const createCalendar = getCalendarDays(year, month);
 
   useEffect(() => {
-    // 여기가 안되네. 바로바로 안불러와짐
-    console.log('main render');
     fetchData();
   }, []);
-
-  useEffect(() => {
-    console.log(
-      scheduleList && Array.isArray(scheduleList['2025-01-07'])
-        ? scheduleList['2025-01-07'].map(el => el.content)
-        : 'no',
-      'scheduleList',
-    );
-  }, [scheduleList]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,106 +92,128 @@ const CalendarScreen = () => {
         isViewModalOpen={isViewModalOpen}
         onClose={() => {
           setIsViewModalOpen(false);
-          fetchData();
         }}
         selectDate={selectDate}
         scheduleData={scheduleList ?? []}
         deleteAction={(date: string, id: string) => deleteSchedule(date, id)}
       />
-      <PanGestureHandler onGestureEvent={panGesture}>
-        <View>
-          <View style={styles.headerContainer}>
-            <View style={styles.header}>
-              {/*<TouchableOpacity onPress={() => handleMonth('prev')}>*/}
-              {/*  <Icon name="chevron-back-sharp" size={16} color="#4C585B" />*/}
-              {/*</TouchableOpacity>*/}
-              <MyAppText size="extraLarge" bold space="-1px">
-                {year} {String(month + 1).padStart(2, '0')}
-              </MyAppText>
-              {/*<TouchableOpacity onPress={() => handleMonth('next')}>*/}
-              {/*  <Icon name="chevron-forward-sharp" size={16} color="#4C585B" />*/}
-              {/*</TouchableOpacity>*/}
-            </View>
-            <TouchableOpacity onPress={() => AsyncStorage.clear()}>
-              <MyAppText>AsyncStorage clean</MyAppText>
+      {/*<PanGestureHandler onGestureEvent={panGesture}>*/}
+      <View>
+        <View style={styles.headerContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => handleMonth('prev')}>
+              <Icon
+                name="chevron-back-sharp"
+                size={14}
+                color="#4C585B"
+                style={{ marginRight: 4 }}
+              />
             </TouchableOpacity>
-            <View>
-              <TouchableOpacity onPress={() => handleMonth('now')}>
-                <Icon name="today" size={25} color={theme.color.main} />
-              </TouchableOpacity>
-            </View>
+            <MyAppText size="extraLarge" bold space="-1px">
+              {year} {String(month + 1).padStart(2, '0')}
+            </MyAppText>
+            <TouchableOpacity onPress={() => handleMonth('next')}>
+              <Icon
+                name="chevron-forward-sharp"
+                size={14}
+                color="#4C585B"
+                style={{ marginLeft: 4 }}
+              />
+            </TouchableOpacity>
           </View>
-
-          <View style={styles.table}>
-            <View style={styles.row}>
-              {DayHeader.map((day, index) => (
-                <View style={styles.headerCell} key={index}>
-                  <MyAppText bold color={theme.color.main}>
-                    {day}
-                  </MyAppText>
-                </View>
-              ))}
-            </View>
-
-            <View style={styles.row}>
-              {createCalendar?.map((day, index) => {
-                const isToday =
-                  currentDate.getFullYear() === new Date().getFullYear() &&
-                  currentDate.getMonth() === new Date().getMonth() &&
-                  currentDate.getDate() === day.day;
-
-                const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
-
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      const date = `${String(month + 1).padStart(2, '0')}월 ${String(
-                        day.day,
-                      ).padStart(2, '0')}일`;
-                      // const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
-                      setSelectDate(formattedDate);
-                      setIsViewModalOpen(true);
-                      fetchData();
-                    }}
-                    style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
-                  >
-                    <View>
-                      <MyAppText
-                        style={[
-                          {
-                            // marginTop: 4,
-                            color: day.isCurrentMonth
-                              ? isToday
-                                ? 'white'
-                                : 'black'
-                              : day.isPrevMonth || day.isNextMonth
-                              ? 'darkgray'
-                              : 'black',
-                          },
-                        ]}
-                      >
-                        {day.day}
-                      </MyAppText>
-                    </View>
-                    <View style={styles.scheduleItemContainer}>
-                      {scheduleList && Array.isArray(scheduleList[formattedDate])
-                        ? scheduleList[formattedDate]
-                            .slice(0, 2)
-                            .map((item: TSchedule, i: string) => (
-                              <View key={i} style={styles.scheduleItem}>
-                                <MyAppText>{item.title}</MyAppText>
-                              </View>
-                            ))
-                        : null}
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+          <TouchableOpacity onPress={() => AsyncStorage.clear()}>
+            <MyAppText>AsyncStorage clean</MyAppText>
+          </TouchableOpacity>
+          <View>
+            <TouchableOpacity onPress={() => handleMonth('now')}>
+              <Icon name="today" size={25} color={theme.color.main} />
+            </TouchableOpacity>
           </View>
         </View>
-      </PanGestureHandler>
+
+        <View style={styles.table}>
+          <View style={styles.row}>
+            {DayHeader.map((day, index) => (
+              <View style={styles.headerCell} key={index}>
+                <MyAppText bold color={theme.color.main}>
+                  {day}
+                </MyAppText>
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.row}>
+            {createCalendar?.map((day, index) => {
+              const isToday =
+                currentDate.getFullYear() === new Date().getFullYear() &&
+                currentDate.getMonth() === new Date().getMonth() &&
+                currentDate.getDate() === day.day;
+
+              const formattedMonth = day.isPrevMonth
+                ? month - 1
+                : day.isNextMonth
+                ? month + 1
+                : month;
+              const formattedDate = format(new Date(year, formattedMonth, day.day), 'yyyy-MM-dd');
+
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    const date = `${String(month + 1).padStart(2, '0')}월 ${String(
+                      day.day,
+                    ).padStart(2, '0')}일`;
+                    // const formattedDate = format(new Date(year, month, day.day), 'yyyy-MM-dd');
+                    setSelectDate(formattedDate);
+                    setIsViewModalOpen(true);
+                  }}
+                  style={[styles.cell, isToday && day.isCurrentMonth && styles.today]}
+                >
+                  <View>
+                    <MyAppText
+                      style={[
+                        {
+                          color: day.isCurrentMonth
+                            ? isToday
+                              ? 'white'
+                              : 'black'
+                            : day.isPrevMonth || day.isNextMonth
+                            ? 'darkgray'
+                            : 'black',
+                        },
+                      ]}
+                    >
+                      {day.day}
+                    </MyAppText>
+                  </View>
+                  <View style={styles.scheduleItemContainer}>
+                    {scheduleList &&
+                    Array.isArray(scheduleList[formattedDate]) &&
+                    day.isCurrentMonth
+                      ? scheduleList[formattedDate]
+                          .slice(0, 2)
+                          .map((item: TSchedule, i: string) => (
+                            <View key={i} style={styles.scheduleItem}>
+                              <MyAppText numberOfLines={1}>{item.title}</MyAppText>
+                            </View>
+                          ))
+                      : null}
+
+                    {scheduleList &&
+                    Array.isArray(scheduleList[formattedDate]) &&
+                    scheduleList[formattedDate].length > 2 ? (
+                      <View style={styles.noItem}>
+                        <MyAppText size="small">...</MyAppText>
+                      </View>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      </View>
+      {/*</PanGestureHandler>*/}
     </SafeAreaView>
   );
 };
@@ -263,6 +281,17 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     alignItems: 'center',
     backgroundColor: `${theme.color.sub}20`,
+  },
+  noItem: {
+    width: 46,
+    // padding: 1,
+    borderRadius: 3,
+    height: 12,
+    display: 'flex',
+    marginTop: -10,
+    // justifyContent: 'flex-start',
+    alignItems: 'center',
+    // backgroundColor: `${theme.color.sub}20`,
   },
   today: {
     backgroundColor: theme.color.main,

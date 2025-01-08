@@ -4,11 +4,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CalendarScreen from '../screens/CalendarScreen.tsx';
 import MemoScreen from '../screens/MemoScreen.tsx';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import BasicScreen from '../screens/BasicScreen.tsx';
 import Icon from 'react-native-vector-icons/Ionicons';
 import theme from '../styles/theme.ts';
 import ScheduleEnrollScreen from '../screens/ScheduleEnrollScreen.tsx';
 import { MyAppText } from '../styles/typography.ts';
+import ListScreen from '../screens/ListScreen.tsx';
 
 export type StackParamList = {
   // 이동할 화면의 이름을 선언: {화면에 넘길 변수의 타입 선언, 없다면 undefined}
@@ -75,20 +75,35 @@ const Navigator = () => {
           }}
         />
         <Tab.Screen
-          name="Memo"
-          component={MemoScreen}
+          name="List"
+          component={ListScreen}
           options={{
             headerShown: false,
             tabBarShowLabel: false,
             tabBarIcon: ({ focused }) => (
               <Icon
-                name={focused ? 'create' : 'create-outline'}
+                name={focused ? 'reader' : 'reader-outline'}
                 size={28}
                 color={focused ? theme.color.main : theme.color.sub}
               />
             ),
           }}
         />
+        {/*<Tab.Screen*/}
+        {/*  name="Memo"*/}
+        {/*  component={MemoScreen}*/}
+        {/*  options={{*/}
+        {/*    headerShown: false,*/}
+        {/*    tabBarShowLabel: false,*/}
+        {/*    tabBarIcon: ({ focused }) => (*/}
+        {/*      <Icon*/}
+        {/*        name={focused ? 'create' : 'create-outline'}*/}
+        {/*        size={28}*/}
+        {/*        color={focused ? theme.color.main : theme.color.sub}*/}
+        {/*      />*/}
+        {/*    ),*/}
+        {/*  }}*/}
+        {/*/>*/}
         {/*<Tab.Screen*/}
         {/*  name="App"*/}
         {/*  component={BasicScreen}*/}

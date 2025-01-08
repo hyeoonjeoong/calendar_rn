@@ -131,7 +131,7 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
                       <View>
                         <MyAppText size="medium">{item.title || '날짜 없음'}</MyAppText>
                         <MyAppText color={theme.color.main}>
-                          {`${item.startTime} ~ ${item.endTime}` || '종일'}
+                          {item.startTime ? `${item.startTime} ~ ${item.endTime}` : '종일'}
                         </MyAppText>
                       </View>
                       <MyAppText>{item.content || '내용이 없어요'}</MyAppText>
