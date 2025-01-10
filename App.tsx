@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navigator from './src/navigation/Navigator.tsx';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components';
@@ -6,8 +6,15 @@ import theme from './src/styles/theme.ts';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { toastConfig } from './src/libs/toastConfig.tsx';
 import Toast from 'react-native-toast-message';
+import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 2000);
+  }, []);
+
   return (
     <GestureHandlerRootView>
       <ThemeProvider theme={theme}>
