@@ -6,6 +6,8 @@ export interface TSchedule {
   startTime?: string;
   endDate: string;
   endTime?: string;
+  isMultipleSchedule?: boolean;
+  scheduleStartDate?: string;
 }
 
 export interface TScheduleList {

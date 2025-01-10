@@ -1,24 +1,22 @@
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCalendarDays } from '../libs/date.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
 import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
 import ScheduleModal from '../components/ScheduleModal.tsx';
-import { format } from 'date-fns';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { addDays, differenceInDays, differenceInMinutes, format } from 'date-fns';
 import { getItem, setItem } from '../libs/fun.ts';
-import { TSchedule } from '../type/schedule.ts';
+import { TSchedule, TScheduleList } from '../type/schedule.ts';
 import FloatButton from '../components/FloatButton.tsx';
-
-// type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
 const CalendarScreen = props => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectDate, setSelectDate] = useState<string>();
-  // const navigation = useNavigation<CalendarScreenNavigationProp>();
-  const [scheduleList, setScheduleList] = useState<TSchedule[]>();
+  const [scheduleList, setScheduleList] = useState<TScheduleList>();
+  const [initScheduleData, setInitScheduleData] = useState<TScheduleList>({});
+  const [scheduleResultData, setScheduleResultData] = useState<TSchedule[]>();
 
   // 일요일 0, 월요일 1, 화요일 2, 수요일 3, 목요일 4, 금요일 5, 토요일 6
   const DayHeader = ['일', '월', '화', '수', '목', '금', '토'];
@@ -61,7 +59,8 @@ const CalendarScreen = props => {
 
   const fetchData = async () => {
     const data = await getItem('schedule');
-    setScheduleList(data);
+    // setScheduleList(data);
+    setInitScheduleData(data);
   };
 
   const deleteSchedule = async (startDate: string, scheduleId: string) => {
@@ -87,6 +86,57 @@ const CalendarScreen = props => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const data = Object.values(initScheduleData).reduce((acc, cur) => {
+      return [...acc, ...cur];
+    }, []);
+
+    let allSchedules: TSchedule[] = [];
+
+    data.forEach(item => {
+      if (item.startDate === item.endDate) {
+        allSchedules.push(item);
+      } else {
+        const diff = differenceInDays(item.endDate, item.startDate);
+        for (let i = 0; i <= diff; i++) {
+          allSchedules.push({
+            ...item,
+            startTime: i === 0 ? item.startTime : '00:00',
+            endTime: i === diff ? item.endTime : '23:59',
+            startDate: format(addDays(item.startDate, i), 'yyyy-MM-dd'),
+            isMultipleSchedule: true,
+            scheduleStartDate: item.startDate,
+          });
+        }
+      }
+    });
+
+    allSchedules.sort((lv, rv) => {
+      // 시작일,시간 기준으로 정렬
+      return differenceInMinutes(
+        `${lv.startDate} ${lv.startTime}`,
+        `${rv.startDate} ${rv.startTime}`,
+      );
+    });
+
+    console.log(allSchedules, 'allSchedules@@');
+    const result = {};
+    allSchedules.forEach(item => {
+      if (result[item.startDate]) {
+        result[item.startDate].push({ ...item, order: result[item.startDate].length });
+      } else {
+        result[item.startDate] = [{ ...item, order: 0 }];
+      }
+    });
+
+    console.log(result, 'result');
+
+    setScheduleList(result);
+    setScheduleResultData(allSchedules);
+  }, [initScheduleData]);
+
+  console.log(scheduleList, 'scheduleList');
+
   return (
     <SafeAreaView style={styles.container}>
       <ScheduleModal
@@ -96,7 +146,7 @@ const CalendarScreen = props => {
           setSelectDate(undefined);
         }}
         selectDate={selectDate}
-        scheduleData={scheduleList ?? []}
+        scheduleData={scheduleList ?? {}}
         deleteAction={(date: string, id: string) => deleteSchedule(date, id)}
       />
       {/*<PanGestureHandler onGestureEvent={panGesture}>*/}
@@ -123,9 +173,9 @@ const CalendarScreen = props => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => AsyncStorage.clear()}>
-            <MyAppText>Storage Clean</MyAppText>
-          </TouchableOpacity>
+          {/*<TouchableOpacity onPress={() => AsyncStorage.clear()}>*/}
+          {/*  <MyAppText>Storage Clean</MyAppText>*/}
+          {/*</TouchableOpacity>*/}
           <View>
             <TouchableOpacity onPress={() => handleMonth('now')}>
               <Icon name="today" size={25} color={theme.color.main} />
@@ -168,7 +218,6 @@ const CalendarScreen = props => {
                   style={[
                     styles.cell,
                     isToday && day.isCurrentMonth && styles.today,
-                    // selectDate === formattedDate && day.isCurrentMonth && styles.selectDay,
                     selectDate === formattedDate && styles.selectDay,
                   ]}
                 >
@@ -183,22 +232,37 @@ const CalendarScreen = props => {
                       {day.day}
                     </MyAppText>
                   </View>
-                  <View style={styles.scheduleItemContainer}>
-                    {scheduleList &&
-                    Array.isArray(scheduleList[formattedDate]) &&
-                    day.isCurrentMonth
-                      ? scheduleList[formattedDate]
-                          .slice(0, 2)
-                          .map((item: TSchedule, i: string) => (
-                            <View key={i} style={styles.scheduleItem}>
-                              <MyAppText numberOfLines={1}>{item.title}</MyAppText>
-                            </View>
-                          ))
-                      : null}
 
-                    {scheduleList &&
-                    Array.isArray(scheduleList[formattedDate]) &&
-                    scheduleList[formattedDate].length > 2 ? (
+                  <View style={styles.scheduleItemContainer}>
+                    {scheduleResultData
+                      ?.filter(info => info.startDate === formattedDate)
+                      .slice(0, 2)
+                      .map((item, index) => (
+                        <View
+                          key={index}
+                          style={[
+                            styles.scheduleItem,
+                            item.isMultipleSchedule && styles.continuousSchedule,
+                            // item.startDate === item.endDate && styles.continuousSchedule,
+                          ]}
+                        >
+                          {item.startDate === formattedDate && (
+                            <MyAppText numberOfLines={1}>
+                              {/*{item.title}*/}
+                              {/*{item.scheduleStartDate}*/}
+                              {
+                                scheduleList[item.scheduleStartDate]?.find(
+                                  info => info.id === item.id,
+                                ).order
+                              }
+                            </MyAppText>
+                          )}
+                        </View>
+                      ))}
+
+                    {scheduleResultData &&
+                    scheduleResultData?.filter(info => info.startDate === formattedDate).length >
+                      2 ? (
                       <View style={styles.noItem}>
                         <MyAppText size="small">...</MyAppText>
                       </View>
@@ -265,6 +329,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     height: 80,
+
     // padding: 2,
     // borderWidth: 0.3,
     // borderColor: `${theme.color.sub}40`,
@@ -276,8 +341,6 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   scheduleItem: {
-    // borderWidth: 1,
-    // borderColor: `${theme.color.sub}70`,
     width: 46,
     padding: 1,
     height: 19,
@@ -287,14 +350,11 @@ const styles = StyleSheet.create({
   },
   noItem: {
     width: 46,
-    // padding: 1,
     borderRadius: 3,
     height: 12,
     display: 'flex',
-    marginTop: -10,
-    // justifyContent: 'flex-start',
+    marginTop: -11,
     alignItems: 'center',
-    // backgroundColor: `${theme.color.sub}20`,
   },
   today: {
     backgroundColor: theme.color.main,
@@ -312,7 +372,10 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     textAlign: 'center',
     alignItems: 'center',
-    height: 72,
+    height: 75,
+  },
+  continuousSchedule: {
+    backgroundColor: `${theme.color.blue}75`,
   },
   todayText: {
     color: theme.color.white,

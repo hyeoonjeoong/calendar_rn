@@ -6,7 +6,7 @@ import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { TSchedule } from '../type/schedule.ts';
+import { TSchedule, TScheduleList } from '../type/schedule.ts';
 import { screenWidth } from '../libs/fun.ts';
 // import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 
@@ -18,7 +18,7 @@ type CalendarModalProps = {
   isViewModalOpen: boolean;
   onClose: () => void;
   selectDate: string | undefined;
-  scheduleData: TSchedule[];
+  scheduleData: TScheduleList;
   deleteAction: (date: string, id: string) => void;
 };
 
