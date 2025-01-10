@@ -13,39 +13,38 @@ import {
 } from 'date-fns';
 import theme from '../styles/theme.ts';
 import { MyAppText } from '../styles/typography.ts';
-import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { ko } from 'date-fns/locale';
 
-const ListScreen = props => {
+const ListScreen = ({ navigation }) => {
   const [list, setList] = useState<TScheduleList>({});
   const [resultList, setResultList] = useState<TScheduleList>({});
+  // const navigation = useNavigation();
 
   const fetchData = async () => {
     const data = await getItem('schedule');
-    console.log(data, 'storage data');
+    // console.log(data, 'origin data');
     setList(data);
   };
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', e => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   useEffect(() => {
-    console.log('pp');
+    console.log('ListScreenPage render');
     fetchData();
   }, []);
-  console.log('gㅇㅇk');
-  // useEffect(() => {
-  //   const unsubscribe = props.navigation.addListener('transitionEnd', e => {
-  //     console.log('render');
-  //     fetchData();
-  //   });
-  //   return unsubscribe;
-  // }, [props.navigation]);
 
   useEffect(() => {
     const data = Object.values(list).reduce(function (acc, cur) {
       return [...acc, ...cur];
     }, []);
 
-    console.log(data, 'data 배열로 변경');
+    // console.log(data, 'data 배열로 변경');
     const resultData: TSchedule[] = [];
     data.forEach(info => {
       if (info.startDate === info.endDate) {
@@ -69,7 +68,7 @@ const ListScreen = props => {
       return !isBefore(parsedDate, today);
     });
 
-    console.log(afterTodayData, 'afterTodayData');
+    // console.log(afterTodayData, 'afterTodayData');
     afterTodayData.sort((lv, rv) => {
       return differenceInMinutes(
         `${lv.startDate} ${lv.startTime}:00`,
@@ -77,7 +76,7 @@ const ListScreen = props => {
       );
     });
 
-    console.log(resultData, 'resultData');
+    // console.log(resultData, 'resultData');
 
     const result = {};
     afterTodayData.forEach(info => {
@@ -88,7 +87,7 @@ const ListScreen = props => {
       }
     });
 
-    console.log(result, '최종 result');
+    // console.log(result, '최종 result');
     setResultList(result);
   }, [list]);
 
