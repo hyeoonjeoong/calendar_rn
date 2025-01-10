@@ -33,6 +33,7 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
   const [scheduleList, setScheduleList] = useState<TSchedule[]>();
   const [selectedItem, setSelectedItem] = useState<TSchedule>();
 
+  // console.log(selectDate, 'selectDate');
   useEffect(() => {
     if (!selectDate || !scheduleData) {
       return;

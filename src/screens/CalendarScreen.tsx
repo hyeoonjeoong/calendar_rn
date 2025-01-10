@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getItem, setItem } from '../libs/fun.ts';
 import { TSchedule } from '../type/schedule.ts';
+import FloatButton from '../components/FloatButton.tsx';
 
 // type CalendarScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'DateDetail'>;
 
@@ -32,7 +33,7 @@ const CalendarScreen = props => {
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  // const date = currentDate.getDate();
+  const date = currentDate.getDate();
   // const day = currentDate.getDay();
 
   const handleMonth = (type: 'prev' | 'next' | 'now') => {
@@ -208,6 +209,12 @@ const CalendarScreen = props => {
             })}
           </View>
         </View>
+        <FloatButton
+          selectedDate={
+            selectDate ??
+            `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`
+          }
+        />
       </View>
       {/*</PanGestureHandler>*/}
     </SafeAreaView>
