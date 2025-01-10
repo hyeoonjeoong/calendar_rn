@@ -10,9 +10,12 @@ import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
   useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 2000);
+    const timer = setTimeout(() => {
+      if (SplashScreen) {
+        SplashScreen.hide();
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
