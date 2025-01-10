@@ -7,3 +7,7 @@ export interface TSchedule {
   endDate: string;
   endTime?: string;
 }
+
+export interface TScheduleList {
+  [key: string]: TSchedule[];
+}

@@ -85,6 +85,7 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
           value={title}
           style={styles.input}
           placeholder="제목을 입력해주세요"
+          placeholderTextColor={`${theme.color.main}70`}
         />
       </View>
       <View style={styles.sectionContainer}>
@@ -275,6 +276,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderRadius: 6,
+    height: 40,
     borderColor: `${theme.color.main}60`,
   },
   button: {

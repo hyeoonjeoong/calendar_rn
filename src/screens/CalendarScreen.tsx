@@ -107,7 +107,7 @@ const CalendarScreen = props => {
                 name="chevron-back-sharp"
                 size={14}
                 color="#4C585B"
-                style={{ marginRight: 4 }}
+                style={{ marginRight: 4, padding: 6 }}
               />
             </TouchableOpacity>
             <MyAppText size="extraLarge" bold space="-1px">
@@ -118,7 +118,7 @@ const CalendarScreen = props => {
                 name="chevron-forward-sharp"
                 size={14}
                 color="#4C585B"
-                style={{ marginLeft: 4 }}
+                style={{ marginLeft: 4, padding: 6 }}
               />
             </TouchableOpacity>
           </View>
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
   },
   headerCell: {
     backgroundColor: theme.color.white,
@@ -273,6 +273,7 @@ const styles = StyleSheet.create({
     // borderColor: `${theme.color.sub}70`,
     width: 46,
     padding: 1,
+    height: 19,
     borderRadius: 3,
     alignItems: 'center',
     backgroundColor: `${theme.color.sub}40`,

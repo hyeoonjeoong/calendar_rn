@@ -56,7 +56,7 @@ const Navigator = () => {
         initialRouteName="Calendar"
         screenOptions={{
           tabBarActiveTintColor: theme.fontColor.basic,
-          tabBarStyle: { height: 60, paddingRight: 30, paddingLeft: 30 },
+          tabBarStyle: { height: 80, paddingRight: 30, paddingLeft: 30, paddingTop: 10 },
         }}
       >
         <Tab.Screen
@@ -78,8 +78,9 @@ const Navigator = () => {
           name="List"
           component={ListScreen}
           options={{
-            headerShown: false,
+            // headerShown: false,
             tabBarShowLabel: false,
+            headerTitle: () => <MyAppText>일정 리스트</MyAppText>,
             tabBarIcon: ({ focused }) => (
               <Icon
                 name={focused ? 'reader' : 'reader-outline'}

@@ -121,6 +121,7 @@ const ScheduleModal: React.FC<CalendarModalProps> = ({
               {scheduleData &&
                 scheduleList?.map((item, index) => (
                   <ReanimatedSwipeable
+                    key={index}
                     friction={2}
                     enableTrackpadTwoFingerGesture
                     rightThreshold={40}
