@@ -41,6 +41,9 @@ const ListScreen = ({ navigation }) => {
 
   useEffect(() => {
     const data = Object.values(list).reduce(function (acc, cur) {
+      if (!Array.isArray(cur)) {
+        return acc;
+      }
       return [...acc, ...cur];
     }, []);
 

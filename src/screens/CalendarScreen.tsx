@@ -88,6 +88,9 @@ const CalendarScreen = props => {
 
   useEffect(() => {
     const data = Object.values(initScheduleData).reduce((acc, cur) => {
+      if (!Array.isArray(cur)) {
+        return acc;
+      }
       return [...acc, ...cur];
     }, []);
 
@@ -106,6 +109,7 @@ const CalendarScreen = props => {
             startDate: format(addDays(item.startDate, i), 'yyyy-MM-dd'),
             isMultipleSchedule: true,
             scheduleStartDate: item.startDate,
+            title: i === 0 ? item.title : '',
           });
         }
       }
@@ -119,7 +123,6 @@ const CalendarScreen = props => {
       );
     });
 
-    console.log(allSchedules, 'allSchedules@@');
     const result = {};
     allSchedules.forEach(item => {
       if (result[item.startDate]) {
@@ -129,13 +132,9 @@ const CalendarScreen = props => {
       }
     });
 
-    console.log(result, 'result');
-
     setScheduleList(result);
     setScheduleResultData(allSchedules);
   }, [initScheduleData]);
-
-  console.log(scheduleList, 'scheduleList');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -237,28 +236,47 @@ const CalendarScreen = props => {
                     {scheduleResultData
                       ?.filter(info => info.startDate === formattedDate)
                       .slice(0, 2)
-                      .map((item, index) => (
-                        <View
-                          key={index}
-                          style={[
-                            styles.scheduleItem,
-                            item.isMultipleSchedule && styles.continuousSchedule,
-                            // item.startDate === item.endDate && styles.continuousSchedule,
-                          ]}
-                        >
-                          {item.startDate === formattedDate && (
-                            <MyAppText numberOfLines={1}>
-                              {/*{item.title}*/}
-                              {/*{item.scheduleStartDate}*/}
-                              {
-                                scheduleList[item.scheduleStartDate]?.find(
-                                  info => info.id === item.id,
-                                ).order
-                              }
-                            </MyAppText>
-                          )}
-                        </View>
-                      ))}
+                      .map((item, index) => {
+                        const scheduleStartDate = item.scheduleStartDate;
+                        const startDate = item.startDate;
+
+                        const orderNum = scheduleList[scheduleStartDate]?.find(
+                          el => el.id === item.id,
+                        )?.order;
+                        const scheduleLength = scheduleList[startDate]?.length;
+
+                        return (
+                          <View
+                            key={index}
+                            style={[
+                              !item.isMultipleSchedule && styles.scheduleItem,
+                              item.isMultipleSchedule && styles.continuousSchedule,
+                              orderNum === 1 &&
+                                scheduleLength === 1 && {
+                                  marginTop: 23,
+                                },
+                            ]}
+                          >
+                            {item.startDate === formattedDate && (
+                              <MyAppText
+                                numberOfLines={1}
+                                style={{
+                                  flexWrap: item.isMultipleSchedule ? 'nowrap' : 'wrap',
+                                  overflow: 'visible',
+                                }}
+                              >
+                                {item.title}
+                                {/*{item.scheduleStartDate}*/}
+                                {/*{*/}
+                                {/*  scheduleList[item.scheduleStartDate]?.find(*/}
+                                {/*    info => info.id === item.id,*/}
+                                {/*  ).order*/}
+                                {/*}*/}
+                              </MyAppText>
+                            )}
+                          </View>
+                        );
+                      })}
 
                     {scheduleResultData &&
                     scheduleResultData?.filter(info => info.startDate === formattedDate).length >
@@ -344,7 +362,7 @@ const styles = StyleSheet.create({
     width: 46,
     padding: 1,
     height: 19,
-    borderRadius: 3,
+    // borderRadius: 3,
     alignItems: 'center',
     backgroundColor: `${theme.color.sub}40`,
   },
@@ -375,7 +393,14 @@ const styles = StyleSheet.create({
     height: 75,
   },
   continuousSchedule: {
-    backgroundColor: `${theme.color.blue}75`,
+    backgroundColor: theme.color.sub,
+    width: 50,
+    padding: 1,
+    borderWidth: 0,
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // borderRadius: 3,
   },
   todayText: {
     color: theme.color.white,
