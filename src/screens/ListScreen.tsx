@@ -1,5 +1,5 @@
 import { SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { getItem, setItem } from '../libs/fun.ts';
+import { getItem, screenHeight, setItem } from '../libs/fun.ts';
 import React, { useEffect, useState } from 'react';
 import { TSchedule, TScheduleList } from '../type/schedule.ts';
 import {
@@ -26,7 +26,6 @@ const ListScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     const data = await getItem('schedule');
-    console.log(data, 'origin data');
     setList(data);
   };
 
@@ -34,7 +33,7 @@ const ListScreen = ({ navigation }) => {
     const data = await getItem('schedule');
     const updatedSchedule = data[startDate].filter(el => el.id !== scheduleId);
     try {
-      if (updatedSchedule.locale === 0) {
+      if (updatedSchedule.length === 0) {
         delete data[startDate];
       } else {
         data[startDate] = updatedSchedule;
@@ -76,11 +75,13 @@ const ListScreen = ({ navigation }) => {
   }, [navigation]);
 
   useEffect(() => {
-    console.log('ListScreenPage render');
     fetchData();
   }, []);
 
   useEffect(() => {
+    if (list === null) {
+      return;
+    }
     const data = Object.values(list).reduce(function (acc, cur) {
       if (!Array.isArray(cur)) {
         return acc;
@@ -88,7 +89,6 @@ const ListScreen = ({ navigation }) => {
       return [...acc, ...cur];
     }, []);
 
-    // console.log(data, 'data 배열로 변경');
     const resultData: TSchedule[] = [];
     data.forEach(info => {
       if (info.startDate === info.endDate) {
@@ -112,15 +112,12 @@ const ListScreen = ({ navigation }) => {
       return !isBefore(parsedDate, today);
     });
 
-    // console.log(afterTodayData, 'afterTodayData');
     afterTodayData.sort((lv, rv) => {
       return differenceInMinutes(
         `${lv.startDate} ${lv.startTime}:00`,
         `${rv.startDate} ${rv.startTime}:00`,
       );
     });
-
-    // console.log(resultData, 'resultData');
 
     const result = {};
     afterTodayData.forEach(info => {
@@ -131,7 +128,6 @@ const ListScreen = ({ navigation }) => {
       }
     });
 
-    // console.log(result, '최종 result');
     setResultList(result);
   }, [list]);
 
@@ -178,6 +174,22 @@ const ListScreen = ({ navigation }) => {
                 </View>
               </View>
             ))}
+          {(list === null || Object.keys(list).length === 0) && (
+            <View style={styles.noScheduleContainer}>
+              <Icon name="calendar-outline" size={26} color={theme.color.main} />
+              <MyAppText marginTop={6}>등록된 일정 리스트가 없어요</MyAppText>
+              <TouchableOpacity
+                style={[styles.button, { marginTop: 10 }]}
+                onPress={() => {
+                  navigation.navigate('ScheduleEnroll', {
+                    selectedDate: format(new Date(), 'yyyy-MM-dd') as string,
+                  });
+                }}
+              >
+                <MyAppText style={styles.buttonText}>일정 등록하기</MyAppText>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -239,6 +251,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     display: 'flex',
     backgroundColor: theme.color.red,
+  },
+  noScheduleContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 50,
+    width: '100%',
+    height: '100%',
+  },
+  button: {
+    backgroundColor: theme.color.main,
+    padding: 6,
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: theme.color.white,
   },
 });
 export default ListScreen;

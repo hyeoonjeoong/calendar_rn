@@ -35,11 +35,24 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
   const [isOpenEndModal, setIsOpenEndModal] = useState<boolean>(false);
   const [isOpenEndTimeModal, setIsOpenEndTimeModal] = useState<boolean>(false);
 
+  const timeDiff = differenceInMinutes(
+    `${format(startDate, 'yyyy-MM-dd')} ${format(startTime, 'HH:mm')}`,
+    `${format(endDate, 'yyyy-MM-dd')} ${format(endTime, 'HH:mm')}`,
+  );
+
   const handleSubmit = () => {
     if (title.trim() === '') {
       Toast.show({
         type: 'info',
         text1: '일정 제목을 입력해주세요',
+        visibilityTime: 1000,
+      });
+      return;
+    }
+    if (timeDiff > 0) {
+      Toast.show({
+        type: 'info',
+        text1: '종료시간이 시작시간보다 이후입니다.',
         visibilityTime: 1000,
       });
       return;
@@ -58,17 +71,16 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
   };
 
   useEffect(() => {
-    const tiemDiff = differenceInMinutes(
-      `${format(startDate, 'yyyy-MM-dd')} ${format(startTime, 'HH:mm')}`,
-      `${format(endDate, 'yyyy-MM-dd')} ${format(endTime, 'HH:mm')}`,
-    );
-
-    console.log(tiemDiff, 'tiemDiff');
-
-    if (tiemDiff > 0) {
-      console.log('종료시간이 시작시간보다 이후입니다.');
+    if (timeDiff > 0) {
+      Toast.show({
+        type: 'info',
+        text1: '종료시간이 시작시간보다 이후입니다.',
+        visibilityTime: 1000,
+      });
+      setEndTime(new Date());
+      return;
     }
-  }, [startDate, endDate, startTime, endTime]);
+  }, [timeDiff]);
 
   const saveSchedule = async (schedule: TSchedule) => {
     // console.log(schedule, 'schedule');

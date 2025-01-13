@@ -22,13 +22,6 @@ const CalendarScreen = props => {
   const DayHeader = ['일', '월', '화', '수', '목', '금', '토'];
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  useEffect(() => {
-    const unsubscribe = props.navigation.addListener('transitionEnd', e => {
-      fetchData();
-    });
-    return unsubscribe;
-  }, [props.navigation]);
-
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const date = currentDate.getDate();
@@ -46,6 +39,16 @@ const CalendarScreen = props => {
       setCurrentDate(nowMoth);
     }
   };
+
+  // useEffect(() => {
+  //   if (String(month + 1).padStart(2, '0') === format(new Date(), 'MM')) {
+  //     console.log('jjjjjj');
+  //     const nowMoth = new Date();
+  //
+  //     setCurrentDate(nowMoth);
+  //     return;
+  //   }
+  // }, []);
 
   const fetchData = async () => {
     const data = await getItem('schedule');
@@ -71,6 +74,13 @@ const CalendarScreen = props => {
   };
 
   const createCalendar = getCalendarDays(year, month);
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener('transitionEnd', e => {
+      fetchData();
+    });
+    return unsubscribe;
+  }, [props.navigation]);
 
   useEffect(() => {
     fetchData();
@@ -253,10 +263,21 @@ const CalendarScreen = props => {
                             {item.startDate === formattedDate && (
                               <MyAppText
                                 numberOfLines={1}
-                                style={{
-                                  flexWrap: item.isMultipleSchedule ? 'nowrap' : 'wrap',
-                                  overflow: 'visible',
-                                }}
+                                // style={[
+                                //   {
+                                //     // flexWrap: item.isMultipleSchedule ? 'nowrap' : 'wrap',
+                                //     // overflow: 'visible',
+                                //   },
+                                //   item.isMultipleSchedule &&
+                                //     {
+                                //       // width: 80,
+                                //       // textAlign: 'center',
+                                //     },
+                                // ]}
+                                // style={{
+                                //   flexWrap: 'wrap', // 줄바꿈 허용
+                                //   textAlign: 'left', // 필요 시 정렬
+                                // }}
                               >
                                 {item.title}
                                 {/*{item.scheduleStartDate}*/}
@@ -343,9 +364,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 80,
 
-    // padding: 2,
-    // borderWidth: 0.3,
-    // borderColor: `${theme.color.sub}40`,
+    padding: 2,
+    borderWidth: 0.3,
+    borderColor: `${theme.color.sub}40`,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
   },
   scheduleItemContainer: {
     marginTop: 8,
