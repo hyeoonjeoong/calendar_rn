@@ -206,7 +206,6 @@ const styles = StyleSheet.create({
   },
   rightAction: {
     width: 40,
-    // flex: 1,
     height: 38,
     marginTop: 20,
     alignItems: 'center',

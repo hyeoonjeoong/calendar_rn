@@ -4,12 +4,12 @@ import { getCalendarDays } from '../libs/date.ts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MyAppText } from '../styles/typography.ts';
 import theme from '../styles/theme.ts';
-import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
 import ScheduleModal from '../components/ScheduleModal.tsx';
 import { addDays, differenceInDays, differenceInMinutes, format } from 'date-fns';
 import { getItem, setItem } from '../libs/fun.ts';
 import { TSchedule, TScheduleList } from '../type/schedule.ts';
 import FloatButton from '../components/FloatButton.tsx';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CalendarScreen = props => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -47,16 +47,6 @@ const CalendarScreen = props => {
     }
   };
 
-  const panGesture = (e: GestureEvent) => {
-    const { translationX } = e.nativeEvent;
-    // console.log(typeof translationX);
-    if ((translationX as number) > 50) {
-      handleMonth('prev');
-    } else if ((translationX as number) > -50) {
-      handleMonth('next');
-    }
-  };
-
   const fetchData = async () => {
     const data = await getItem('schedule');
     // setScheduleList(data);
@@ -87,7 +77,10 @@ const CalendarScreen = props => {
   }, []);
 
   useEffect(() => {
-    const data = Object.values(initScheduleData).reduce((acc, cur) => {
+    if (initScheduleData === null) {
+      return;
+    }
+    const data = Object.values(initScheduleData)?.reduce((acc, cur) => {
       if (!Array.isArray(cur)) {
         return acc;
       }
@@ -110,6 +103,7 @@ const CalendarScreen = props => {
             isMultipleSchedule: true,
             scheduleStartDate: item.startDate,
             title: i === 0 ? item.title : '',
+            id: item.id,
           });
         }
       }
@@ -148,7 +142,6 @@ const CalendarScreen = props => {
         scheduleData={scheduleList ?? {}}
         deleteAction={(date: string, id: string) => deleteSchedule(date, id)}
       />
-      {/*<PanGestureHandler onGestureEvent={panGesture}>*/}
       <View>
         <View style={styles.headerContainer}>
           <View style={styles.header}>
@@ -172,9 +165,9 @@ const CalendarScreen = props => {
               />
             </TouchableOpacity>
           </View>
-          {/*<TouchableOpacity onPress={() => AsyncStorage.clear()}>*/}
-          {/*  <MyAppText>Storage Clean</MyAppText>*/}
-          {/*</TouchableOpacity>*/}
+          <TouchableOpacity onPress={() => AsyncStorage.clear()}>
+            <MyAppText>Storage Clean</MyAppText>
+          </TouchableOpacity>
           <View>
             <TouchableOpacity onPress={() => handleMonth('now')}>
               <Icon name="today" size={25} color={theme.color.main} />
@@ -237,13 +230,13 @@ const CalendarScreen = props => {
                       ?.filter(info => info.startDate === formattedDate)
                       .slice(0, 2)
                       .map((item, index) => {
-                        const scheduleStartDate = item.scheduleStartDate;
-                        const startDate = item.startDate;
+                        const scheduleStartDate = item.scheduleStartDate as string;
+                        const startDate = item.startDate as string;
 
-                        const orderNum = scheduleList[scheduleStartDate]?.find(
+                        const orderNum = scheduleList?.[scheduleStartDate]?.find(
                           el => el.id === item.id,
                         )?.order;
-                        const scheduleLength = scheduleList[startDate]?.length;
+                        const scheduleLength = scheduleList?.[startDate]?.length;
 
                         return (
                           <View
@@ -282,7 +275,10 @@ const CalendarScreen = props => {
                     scheduleResultData?.filter(info => info.startDate === formattedDate).length >
                       2 ? (
                       <View style={styles.noItem}>
-                        <MyAppText size="small">...</MyAppText>
+                        <MyAppText size="small" bold space="1">
+                          ...
+                        </MyAppText>
+                        {/*<Icon name="ellipsis-horizontal-sharp" size={12} color="red" />*/}
                       </View>
                     ) : null}
                   </View>
@@ -298,7 +294,6 @@ const CalendarScreen = props => {
           }
         />
       </View>
-      {/*</PanGestureHandler>*/}
     </SafeAreaView>
   );
 };
@@ -371,7 +366,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     height: 12,
     display: 'flex',
-    marginTop: -11,
+    marginTop: -10,
     alignItems: 'center',
   },
   today: {
@@ -393,7 +388,8 @@ const styles = StyleSheet.create({
     height: 75,
   },
   continuousSchedule: {
-    backgroundColor: theme.color.sub,
+    // backgroundColor: theme.color.sub,
+    backgroundColor: `${theme.color.main}25`,
     width: 50,
     padding: 1,
     borderWidth: 0,

@@ -1,5 +1,5 @@
-import { SafeAreaView, ScrollView, View, StyleSheet } from 'react-native';
-import { getItem } from '../libs/fun.ts';
+import { SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { getItem, setItem } from '../libs/fun.ts';
 import React, { useEffect, useState } from 'react';
 import { TSchedule, TScheduleList } from '../type/schedule.ts';
 import {
@@ -14,17 +14,58 @@ import {
 import theme from '../styles/theme.ts';
 import { MyAppText } from '../styles/typography.ts';
 import { ko } from 'date-fns/locale';
+import Icon from 'react-native-vector-icons/Ionicons';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 const ListScreen = ({ navigation }) => {
   const [list, setList] = useState<TScheduleList>({});
   const [resultList, setResultList] = useState<TScheduleList>({});
   // const navigation = useNavigation();
+  const [selectedItem, setSelectedItem] = useState<TSchedule>();
 
   const fetchData = async () => {
     const data = await getItem('schedule');
-    // console.log(data, 'origin data');
+    console.log(data, 'origin data');
     setList(data);
   };
+
+  const deleteSchedule = async (startDate: string, scheduleId: string) => {
+    const data = await getItem('schedule');
+    const updatedSchedule = data[startDate].filter(el => el.id !== scheduleId);
+    try {
+      if (updatedSchedule.locale === 0) {
+        delete data[startDate];
+      } else {
+        data[startDate] = updatedSchedule;
+      }
+      setItem('schedule', data);
+    } catch (e) {
+      console.log(e);
+    }
+    fetchData();
+  };
+
+  function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+    const styleAnimation = useAnimatedStyle(() => {
+      return {
+        transform: [{ translateX: drag.value + 40 }],
+      };
+    });
+
+    return (
+      <Reanimated.View style={styleAnimation}>
+        <TouchableOpacity
+          style={styles.rightAction}
+          onPress={() =>
+            deleteSchedule(String(selectedItem?.scheduleStartDate), String(selectedItem?.id))
+          }
+        >
+          <Icon name="trash-outline" size={24} color={theme.color.white} />
+        </TouchableOpacity>
+      </Reanimated.View>
+    );
+  }
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('tabPress', e => {
@@ -106,25 +147,33 @@ const ListScreen = ({ navigation }) => {
                 </MyAppText>
                 <View style={styles.card}>
                   {items.map((item, index) => (
-                    <View key={index} style={styles.listItem}>
-                      <View style={{ width: '100%' }}>
-                        <View style={styles.flexRow}>
-                          <MyAppText size="medium">{item.title || '날짜 없음'}</MyAppText>
-                          <MyAppText color={theme.color.main}>
-                            {!item.startTime ||
-                            (item.startTime === '00:00' && item.endTime === '23:59')
-                              ? '종일'
-                              : `${item.startTime} ~ ${item.endTime}`}
-                          </MyAppText>
-                        </View>
-                        {item.content && item.content !== '' && (
-                          <View style={styles.contentBox}>
-                            {/*<Icon name="chatbubble-ellipses-outline" size={18} color="grey" />*/}
-                            <MyAppText style={{ marginLeft: 4 }}>{item.content || ''}</MyAppText>
+                    <ReanimatedSwipeable
+                      key={index}
+                      friction={2}
+                      enableTrackpadTwoFingerGesture
+                      rightThreshold={40}
+                      renderRightActions={RightAction}
+                      onSwipeableWillOpen={() => setSelectedItem(item)}
+                    >
+                      <View key={index} style={styles.listItem}>
+                        <View style={{ width: '100%' }}>
+                          <View style={styles.flexRow}>
+                            <MyAppText size="medium">{item.title || '날짜 없음'}</MyAppText>
+                            <MyAppText color={theme.color.main}>
+                              {!item.startTime ||
+                              (item.startTime === '00:00' && item.endTime === '23:59')
+                                ? '종일'
+                                : `${item.startTime} ~ ${item.endTime}`}
+                            </MyAppText>
                           </View>
-                        )}
+                          {item.content && item.content !== '' && (
+                            <View style={styles.contentBox}>
+                              <MyAppText style={{ marginLeft: 4 }}>{item.content || ''}</MyAppText>
+                            </View>
+                          )}
+                        </View>
                       </View>
-                    </View>
+                    </ReanimatedSwipeable>
                   ))}
                 </View>
               </View>
@@ -181,6 +230,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderRadius: 6,
     padding: 3,
+  },
+  rightAction: {
+    width: 40,
+    height: 31,
+    marginTop: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    backgroundColor: theme.color.red,
   },
 });
 export default ListScreen;

@@ -3,9 +3,9 @@ import { MyAppText } from '../styles/typography.ts';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackParamList } from '../navigation/Navigator.tsx';
 import theme from '../styles/theme.ts';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-native-date-picker';
-import { format } from 'date-fns';
+import { differenceInMinutes, format } from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
@@ -52,9 +52,23 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
       startTime: isAllDay ? '' : format(startTime, 'HH:mm'),
       endDate: format(endDate, 'yyyy-MM-dd'),
       endTime: isAllDay ? '' : format(endTime, 'HH:mm'),
+      scheduleStartDate: format(startDate, 'yyyy-MM-dd'),
     };
     saveSchedule(data);
   };
+
+  useEffect(() => {
+    const tiemDiff = differenceInMinutes(
+      `${format(startDate, 'yyyy-MM-dd')} ${format(startTime, 'HH:mm')}`,
+      `${format(endDate, 'yyyy-MM-dd')} ${format(endTime, 'HH:mm')}`,
+    );
+
+    console.log(tiemDiff, 'tiemDiff');
+
+    if (tiemDiff > 0) {
+      console.log('종료시간이 시작시간보다 이후입니다.');
+    }
+  }, [startDate, endDate, startTime, endTime]);
 
   const saveSchedule = async (schedule: TSchedule) => {
     // console.log(schedule, 'schedule');
@@ -196,6 +210,7 @@ const ScheduleEnrollScreen = ({ route }: { route: ScheduleEnrollScreenNavigation
         cancelText="취소"
         date={endDate}
         open={isOpenEndModal}
+        minimumDate={new Date()}
         onConfirm={date => {
           const formattedDate = format(new Date(date), 'yyyy-MM-dd');
           setIsOpenEndModal(false);
